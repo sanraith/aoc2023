@@ -2,5 +2,17 @@
     "files.watcherExclude": {
         "**/target": true
     },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "src/main/java/**": true,
+        "src/main/resources/**": true,
+        "src/test/java/**": true,
+        "src/test/resources/**": true,
+    },
     "metals.showInferredType": "true"
 }

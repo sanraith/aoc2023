@@ -1,6 +1,13 @@
+package hu.sanraith.aoc2023
+
+import hu.sanraith.aoc2023.solution._
+
+val testMacroVal = findDirectSubModules[Solution]
+
 @main
 def main(args: String*) = {
-  clearConsole
+  // clearConsole
+  println("━━━━━━━━━━━━━━━━━━━")
   println("Advent of Code 2023")
   println("━━━━━━━━━━━━━━━━━━━")
 
@@ -21,7 +28,7 @@ def main(args: String*) = {
 
 def clearConsole = print("\u001b[2J")
 
-def getDays(seq: Seq[String]): Seq[Int] = seq.map(_.toIntOption).flatMap(x => x)
+def getDays(seq: Seq[String]): Seq[Int] = seq.flatMap(_.toIntOption)
 
 def plural(seq: Seq[Any]): String = if (seq.length > 1) "s" else ""
 
@@ -34,7 +41,5 @@ def scaffold(days: Seq[Int]) = {
 }
 
 def solveDays(days: Seq[Int]) = {
-  println(
-    s"Solving day${plural(days)} ${days.mkString(", ")}..."
-  )
+  println(s"Solving day${plural(days)} ${days.mkString(", ")}...")
 }
