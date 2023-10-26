@@ -2,8 +2,6 @@ package hu.sanraith.aoc2023
 
 import hu.sanraith.aoc2023.solution._
 
-val testMacroVal = findDirectSubModules[Solution]
-
 @main
 def main(args: String*) = {
   // clearConsole
