@@ -14,5 +14,8 @@
         "src/test/java/**": true,
         "src/test/resources/**": true,
     },
-    "metals.showInferredType": "true"
+    "metals.showInferredType": "true",
+    "cSpell.words": [
+        "sanraith"
+    ]
 }

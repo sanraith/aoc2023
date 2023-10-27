@@ -36,6 +36,8 @@ def scaffold(days: Seq[Int]) = {
   } else {
     println(s"Scaffolding missing days...")
   }
+
+  IndexGenerator.run()
 }
 
 def solveDays(days: Seq[Int]) = {
