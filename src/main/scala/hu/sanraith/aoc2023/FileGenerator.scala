@@ -5,7 +5,7 @@ import scala.jdk.CollectionConverters.*
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.{Files, Paths}
 
-object FileGenerator {
+object FileGenerator:
   private val dayFileClassNameRegex = """^(Day\d+).scala$""".r
   private val root = Paths.get(System.getProperty("user.dir"))
 
@@ -20,7 +20,7 @@ object FileGenerator {
     "solution"
   )
 
-  def generateSolutionFile(day: Int, title: String) = {
+  def generateSolutionFile(day: Int, title: String) =
     val dayStr =
       if (day < 10) s"0$day"
       else day.toString
@@ -41,9 +41,8 @@ object FileGenerator {
     val solutionPath =
       root.resolve(Paths.get(solutionRoot.toString, s"Day$dayStr.scala"))
     writeToUtf8File(solutionPath.toString, contents)
-  }
 
-  def generateIndexFile() = {
+  def generateIndexFile() =
     val classNameList = Files
       .list(root.resolve(solutionRoot))
       .filter(Files.isRegularFile(_))
@@ -74,13 +73,9 @@ object FileGenerator {
       Paths.get(sourcePart.toString(), indexFilePath.toString())
     )
     writeToUtf8File(resultPath.toString(), contents)
-  }
 
-  def writeToUtf8File(fileName: String, contents: String) = {
+  def writeToUtf8File(fileName: String, contents: String) =
     Files.writeString(Paths.get(fileName), contents, UTF_8)
-  }
 
-  def readUtf8File(fileName: String): String = {
+  def readUtf8File(fileName: String): String =
     Files.readString(Paths.get(fileName), UTF_8)
-  }
-}

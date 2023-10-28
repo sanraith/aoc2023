@@ -2,7 +2,7 @@ package hu.sanraith.aoc2023
 
 import scala.util.matching.Regex
 
-class TemplateFiller(template: String) {
+class TemplateFiller(template: String):
 
   /** Replaces the placeholder with the given content. */
   def fill(placeholder: String, content: String): TemplateFiller =
@@ -11,7 +11,7 @@ class TemplateFiller(template: String) {
   /** Replaces the placeholder with the given lines, keeping the placeholders
     * original indentation level for each line.
     */
-  def fill(placeholder: String, lines: Iterable[String]): TemplateFiller = {
+  def fill(placeholder: String, lines: Iterable[String]): TemplateFiller =
     val withIndentRegex = Regex("""(?m)^(\s*)""" + Regex.quote(placeholder))
 
     withIndentRegex.findFirstMatchIn(template) match {
@@ -21,7 +21,5 @@ class TemplateFiller(template: String) {
         TemplateFiller(withIndentRegex.replaceFirstIn(template, linesStr))
       case None => this
     }
-  }
 
   override def toString(): String = template
-}

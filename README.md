@@ -18,3 +18,4 @@ Solutions for Advent of Code 2023 in Scala.
 - [ ] Run framework
   - [ ] Run solutions
   - [ ] Show progress
+  - [ ] Show time
