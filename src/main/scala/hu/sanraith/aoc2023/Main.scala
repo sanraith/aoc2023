@@ -37,7 +37,8 @@ def scaffold(days: Seq[Int]) = {
     println(s"Scaffolding missing days...")
   }
 
-  IndexGenerator.run()
+  days.foreach(FileGenerator.generateSolutionFile(_, "Unknown Title"))
+  FileGenerator.generateIndexFile()
 }
 
 def solveDays(days: Seq[Int]) = {
