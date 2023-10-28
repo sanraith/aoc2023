@@ -16,6 +16,7 @@ Solutions for Advent of Code 2023 in Scala.
   - [ ] Use test data starting with line break
   - [ ] Use real data
 - [ ] Run framework
-  - [ ] Run solutions
+  - [x] Run solutions
+  - [x] Show time
+  - [x] Show multiline results in new line
   - [ ] Show progress
-  - [ ] Show time

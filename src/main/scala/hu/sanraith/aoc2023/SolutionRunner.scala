@@ -6,6 +6,8 @@ class ConsoleContext(val input: String) extends Context:
   override def progress(value: Double): Unit = {}
 
 object SolutionRunner:
+  val includesNewLineRegex = """^([\s\S]*\n[\s\S]*)$""".r
+
   def run(solution: Solution) =
     val context = ConsoleContext("test input")
     try
@@ -14,10 +16,13 @@ object SolutionRunner:
     catch case e => println(e)
 
   def timed[T](part: Int, work: () => T): Unit =
+    import scala.util.matching.Regex
     var start = System.nanoTime()
     val result =
-      try work()
-      catch e => e.toString
+      (try work().toString
+      catch e => e.toString) match
+        case includesNewLineRegex(x) => s"\n$x"
+        case x                       => x
     val end = System.nanoTime()
     println(s"Part $part (${timeStr(start, end)}): $result")
 
