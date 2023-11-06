@@ -43,6 +43,9 @@ def scaffold(days: Seq[Int]) =
 
 def solveDays(days: Seq[Int]) =
   for (day <- days)
-    val solution = solutionMap(day).createInstance()
-    println(s"\nDay $day - ${solution.title}")
-    SolutionRunner.run(solution)
+    solutionMap.get(day) match
+      case Some(solutionInfo) =>
+        val solution = solutionMap(day).createInstance()
+        println(s"\nDay $day - ${solution.title}")
+        SolutionRunner.run(solution)
+      case None => println(s"\nNo solution found for day $day!")
