@@ -36,9 +36,11 @@ def scaffold(days: Seq[Int]) =
   if (days.length > 0)
     println(s"Scaffolding day${plural(days)} ${days.mkString(", ")}...")
   else
-    println(s"Scaffolding missing days...")
+    println(s"Scaffolding missing days...") // TODO handle missing days
 
-  days.foreach(FileGenerator.generateSolutionFile(_, "Unknown Title"))
+  days.foreach: day =>
+    FileGenerator.generateSolutionFile(day, "Unknown Title") // TODO get title
+    FileGenerator.generateTestFile(day) // TODO get test input, expected result
   FileGenerator.generateIndexFile()
 
 def solveDays(days: Seq[Int]) =

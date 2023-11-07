@@ -19,11 +19,11 @@ object FileGenerator:
     namespacePart.toString,
     "solution"
   )
+  private val testRoot =
+    Paths.get("src", "test", namespacePart.toString, "solution")
 
   def generateSolutionFile(day: Int, title: String) =
-    val dayStr =
-      if (day < 10) s"0$day"
-      else day.toString
+    val dayStr = getDayStr(day)
     val templatePath =
       root.resolve(
         Paths.get(
@@ -40,6 +40,39 @@ object FileGenerator:
       .toString
     val solutionPath =
       root.resolve(Paths.get(solutionRoot.toString, s"Day$dayStr.scala"))
+    writeToUtf8File(solutionPath.toString, contents)
+
+  def generateTestFile(
+      day: Int,
+      part1TestInput: String = "__PART_1_TEST_INPUT__",
+      part1TestExpected: String = "__PART_1_TEST_EXPECTED__",
+      part2TestInput: String = "__PART_2_TEST_INPUT__",
+      part2TestExpected: String = "__PART_2_TEST_EXPECTED__",
+      part1Expected: String = "__PART_1_EXPECTED__",
+      part2Expected: String = "__PART_2_EXPECTED__"
+  ) =
+    val dayStr = getDayStr(day)
+    val templatePath =
+      root.resolve(
+        Paths.get(
+          templateRoot.toString,
+          namespacePart.toString,
+          "solution",
+          "DAY__DAY_STR__Test.scala"
+        )
+      )
+    val template = readUtf8File(templatePath.toString)
+    val contents = TemplateFiller(template)
+      .fill("__DAY_STR__", dayStr)
+      .fill("__PART_1_TEST_INPUT__", part1TestInput)
+      .fill("__PART_1_TEST_EXPECTED__", part1TestExpected)
+      .fill("__PART_2_TEST_INPUT__", part2TestInput)
+      .fill("__PART_2_TEST_EXPECTED__", part2TestExpected)
+      .fill("__PART_1_EXPECTED__", part1Expected)
+      .fill("__PART_2_EXPECTED__", part2Expected)
+      .toString
+    val solutionPath =
+      root.resolve(Paths.get(testRoot.toString, s"Day${dayStr}Test.scala"))
     writeToUtf8File(solutionPath.toString, contents)
 
   def generateIndexFile() =
@@ -79,3 +112,5 @@ object FileGenerator:
 
   def readUtf8File(fileName: String): String =
     Files.readString(Paths.get(fileName), UTF_8)
+
+  def getDayStr(day: Int) = if (day < 10) s"0$day" else day.toString

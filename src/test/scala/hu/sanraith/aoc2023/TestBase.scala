@@ -14,10 +14,11 @@ abstract class SolutionTestSpec extends AnyFunSpec {
       expected: String,
       input: String = null
   )(implicit solution: Solution) =
-    val trimmedInput = trim(Option(input).getOrElse(loadInputFromFile))
-    val actual = part(TestContext(trimmedInput))
-    assertResult(expected)(actual)
+    val resolvedInput = trim(Option(input).getOrElse(loadInputFromFile))
+    val actual = part(TestContext(resolvedInput))
+    assertResult(trim(expected))(actual)
 
+  /** Pending assert */
   def _assertPart(
       part: (Context) => String,
       expected: String,
@@ -30,6 +31,9 @@ abstract class SolutionTestSpec extends AnyFunSpec {
       case Some(m) => println(s"asdasdasda ${m.group(1)}")
     "" // TODO load from file
 
+  /** Trim the starting newline from a string. Allows easier-to-read declaration
+    * with """..."""
+    */
   private def trim(text: String): String =
     leadingNewLineRegex.findFirstMatchIn(text) match
       case Some(m) => m.group(1)
