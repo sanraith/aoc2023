@@ -1,11 +1,16 @@
-package hu.sanraith.aoc2023
+package hu.sanraith.aoc2023.cli
 
 import java.nio.file._
 import scala.jdk.CollectionConverters.*
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.{Files, Paths}
+import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
 
-object FileGenerator:
+object FileManager:
+  val SESSION_KEY_FILENAME = "sessionKey.txt"
+
   private val dayFileClassNameRegex = """^(Day\d+).scala$""".r
   private val root = Paths.get(System.getProperty("user.dir"))
 
@@ -22,7 +27,7 @@ object FileGenerator:
   private val testRoot =
     Paths.get("src", "test", namespacePart.toString, "solution")
 
-  def generateSolutionFile(day: Int, title: String) =
+  def createSolutionFile(day: Int, title: String) =
     val dayStr = getDayStr(day)
     val templatePath =
       root.resolve(
@@ -33,16 +38,16 @@ object FileGenerator:
           "Day__DAY_STR__.scala"
         )
       )
-    val template = readUtf8File(templatePath.toString)
+    val template = readUtf8File(templatePath)
     val contents = TemplateFiller(template)
       .fill("__DAY_STR__", dayStr)
       .fill("__TITLE__", title)
       .toString
     val solutionPath =
       root.resolve(Paths.get(solutionRoot.toString, s"Day$dayStr.scala"))
-    writeToUtf8File(solutionPath.toString, contents)
+    writeToUtf8File(solutionPath, contents)
 
-  def generateTestFile(
+  def createTestFile(
       day: Int,
       part1TestInput: String = "__PART_1_TEST_INPUT__",
       part1TestExpected: String = "__PART_1_TEST_EXPECTED__",
@@ -61,7 +66,7 @@ object FileGenerator:
           "DAY__DAY_STR__Test.scala"
         )
       )
-    val template = readUtf8File(templatePath.toString)
+    val template = readUtf8File(templatePath)
     val contents = TemplateFiller(template)
       .fill("__DAY_STR__", dayStr)
       .fill("__PART_1_TEST_INPUT__", part1TestInput)
@@ -73,9 +78,9 @@ object FileGenerator:
       .toString
     val solutionPath =
       root.resolve(Paths.get(testRoot.toString, s"Day${dayStr}Test.scala"))
-    writeToUtf8File(solutionPath.toString, contents)
+    writeToUtf8File(solutionPath, contents)
 
-  def generateIndexFile() =
+  def createIndexFile() =
     val classNameList = Files
       .list(root.resolve(solutionRoot))
       .filter(Files.isRegularFile(_))
@@ -96,7 +101,7 @@ object FileGenerator:
     val templatePath = root.resolve(
       Paths.get(templateRoot.toString(), indexFilePath.toString())
     )
-    val template = readUtf8File(templatePath.toString())
+    val template = readUtf8File(templatePath)
 
     // Fill template with class list and save it
     val contents = TemplateFiller(template)
@@ -105,12 +110,18 @@ object FileGenerator:
     val resultPath = root.resolve(
       Paths.get(sourcePart.toString(), indexFilePath.toString())
     )
-    writeToUtf8File(resultPath.toString(), contents)
+    writeToUtf8File(resultPath, contents)
 
-  def writeToUtf8File(fileName: String, contents: String) =
-    Files.writeString(Paths.get(fileName), contents, UTF_8)
+  def writeToUtf8File(fileName: Path, contents: String) =
+    Option(fileName.getParent).map(Files.createDirectories(_))
+    Files.writeString(fileName, contents, UTF_8)
 
-  def readUtf8File(fileName: String): String =
-    Files.readString(Paths.get(fileName), UTF_8)
+  def readUtf8File(fileName: Path): String =
+    Files.readString(fileName, UTF_8)
+
+  def readSessionKey(): Option[String] =
+    Try(readUtf8File(Paths.get(SESSION_KEY_FILENAME))) match
+      case Failure(_)     => None
+      case Success(value) => Some(value)
 
   def getDayStr(day: Int) = if (day < 10) s"0$day" else day.toString

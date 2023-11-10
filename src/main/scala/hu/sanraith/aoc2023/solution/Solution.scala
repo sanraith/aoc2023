@@ -2,7 +2,7 @@ package hu.sanraith.aoc2023.solution
 
 trait Context:
   val input: String
-  def progress(value: Double): Unit
+  def progress(value: Double): Unit = {}
 
 abstract class Solution:
   val title: String

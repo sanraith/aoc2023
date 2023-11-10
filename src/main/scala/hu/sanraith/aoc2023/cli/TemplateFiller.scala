@@ -1,4 +1,4 @@
-package hu.sanraith.aoc2023
+package hu.sanraith.aoc2023.cli
 
 import scala.util.matching.Regex
 

@@ -1,3 +1,8 @@
+# Advent of Code
+.cache/
+inputs/
+sessionKey.txt
+
 # bloop and metals
 .bloop
 .bsp

@@ -40,6 +40,4 @@ abstract class SolutionTestSpec extends AnyFunSpec {
       case None    => text
 }
 
-private final class TestContext(val input: String) extends Context {
-  override def progress(value: Double): Unit = {}
-}
+private final class TestContext(val input: String) extends Context
