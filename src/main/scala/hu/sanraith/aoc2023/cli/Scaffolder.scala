@@ -4,6 +4,8 @@ import sys.process._
 import scala.util.Try
 
 class Scaffolder(sessionKey: String):
+  private val includesNewLineRegex = """^([\s\S]*\n[\s\S]*)$""".r
+
   def scaffoldDay(day: Int): Unit =
     val client = WebClient(sessionKey)
     (
@@ -12,10 +14,13 @@ class Scaffolder(sessionKey: String):
     ) match
       case (Some(input), Some(puzzle)) =>
         val inputPath = FileManager.createInputFile(day, input)
+        val part1TestInput = includesNewLineRegex.matches(puzzle.part1TestInput) match
+          case true  => s"\n${puzzle.part1TestInput.trim}"
+          case false => puzzle.part1TestInput
         val testPath = FileManager.createTestFile(
           day,
-          part1TestInput = puzzle.part1TestInput,
-          part1TestExpected = puzzle.part2TestExpected
+          part1TestInput = part1TestInput,
+          part1TestExpected = puzzle.part1TestExpected
         )
         val solutionPath = FileManager.createSolutionFile(day, title = puzzle.title)
 

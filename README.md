@@ -8,9 +8,9 @@ Solutions for Advent of Code 2023 in Scala.
   - [x] Generate index
   - [x] Generate solution file
   - [x] Generate test file
-  - [ ] Load title from web
+  - [x] Load title from web
   - [x] Add caching for loading
-  - [ ] Load test data from web
+  - [x] Load test data from web
   - [x] Load real data from web
 - [ ] Test framework
   - [x] Use test data starting with line break
