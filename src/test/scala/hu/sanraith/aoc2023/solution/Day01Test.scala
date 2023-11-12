@@ -9,9 +9,7 @@ class Day01Test extends SolutionTestSpec {
     it("solves part 1"):
       assertPart(
         day.part1,
-        expected = """aaaaaa
-bbbbbb
-cccccc""",
+        expected = """alma körte barack""",
         input = """example input"""
       )
 
