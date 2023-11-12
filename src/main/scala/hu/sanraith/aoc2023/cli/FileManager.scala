@@ -26,12 +26,12 @@ object FileManager:
   private val testRoot =
     Paths.get("src", "test", namespacePart.toString, "solution")
 
-  def createInputFile(day: Int, contents: String) =
+  def createInputFile(day: Int, contents: String): Path =
     val dayStr = getDayStr(day)
     val path = Paths.get(s"input/Day$dayStr.txt")
     writeToUtf8File(path, contents)
 
-  def createSolutionFile(day: Int, title: String) =
+  def createSolutionFile(day: Int, title: String): Path =
     val dayStr = getDayStr(day)
     val templatePath =
       root.resolve(
@@ -59,7 +59,7 @@ object FileManager:
       part2TestExpected: String = "__PART_2_TEST_EXPECTED__",
       part1Expected: String = "__PART_1_EXPECTED__",
       part2Expected: String = "__PART_2_EXPECTED__"
-  ) =
+  ): Path =
     val dayStr = getDayStr(day)
     val templatePath =
       root.resolve(
@@ -121,6 +121,7 @@ object FileManager:
 
   def writeToUtf8File(fileName: Path, contents: String) =
     Option(fileName.getParent).map(Files.createDirectories(_))
+    println(s"Writing $fileName")
     Files.writeString(fileName, contents, UTF_8)
 
   def readUtf8File(fileName: Path): String =
