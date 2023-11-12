@@ -5,25 +5,30 @@ import scala.util.Try
 import hu.sanraith.aoc2023.common._
 
 class Scaffolder(sessionKey: String):
-  def scaffoldDay(day: Int): Unit =
+  def scaffoldDay(day: Int, onlyInputs: Boolean): Unit =
     val client = WebClient(sessionKey)
-    (
-      client.requestCached(s"${Util.currentYear}/day/$day/input"),
-      client.requestCached(s"${Util.currentYear}/day/$day").map(HtmlParser.parsePuzzlePage).flatten
-    ) match
-      case (Some(input), Some(puzzle)) =>
-        val inputPath = FileManager.createInputFile(day, input)
-        val part1TestInput = Util.includesNewLineRegex.matches(puzzle.part1TestInput) match
-          case true  => s"\n${puzzle.part1TestInput.trim}"
-          case false => puzzle.part1TestInput
-        val testPath = FileManager.createTestFile(
-          day,
-          part1TestInput = part1TestInput,
-          part1TestExpected = puzzle.part1TestExpected
-        )
-        val solutionPath = FileManager.createSolutionFile(day, title = puzzle.title)
+    val inputPath = client
+      .requestCached(s"${Util.currentYear}/day/$day/input")
+      .map(FileManager.createInputFile(day, _))
+    if (inputPath.isEmpty) println(s"Unable to scaffold inputs for day $day")
 
-        println("Opening puzzle files in VS Code...")
-        Try(s"code $inputPath $testPath $solutionPath".!)
+    if (!onlyInputs)
+      client
+        .requestCached(s"${Util.currentYear}/day/$day")
+        .map(HtmlParser.parsePuzzlePage)
+        .flatten match
+        case Some(puzzle) =>
+          val part1TestInput = Util.includesNewLineRegex.matches(puzzle.part1TestInput) match
+            case true  => s"\n${puzzle.part1TestInput.trim}"
+            case false => puzzle.part1TestInput
+          val testPath = FileManager.createTestFile(
+            day,
+            part1TestInput = part1TestInput,
+            part1TestExpected = puzzle.part1TestExpected
+          )
+          val solutionPath = FileManager.createSolutionFile(day, title = puzzle.title)
 
-      case _ => println(s"Unable to scaffold day $day")
+          println("Opening puzzle files in VS Code...")
+          Try(s"code $inputPath $testPath $solutionPath".!)
+
+        case _ => println(s"Unable to scaffold puzzle data for day $day")

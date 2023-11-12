@@ -21,7 +21,7 @@ def main(args: String*) =
     case Some("last") =>
       println("Solving last available day...")
       solveDays(Seq(solutionMap.keySet.toSeq.sorted.last))
-    case Some("scaffold")           => scaffold(getDays(args.drop(1)))
+    case Some("scaffold")           => scaffold(args.drop(1))
     case Some("day") | Some("days") => solveDays(getDays(args.drop(1)))
     case Some(dayRegex(day))        => solveDays(getDays(args))
     case Some(_) =>
@@ -34,8 +34,12 @@ def getDays(seq: Seq[String]): Seq[Int] = seq.flatMap(_.toIntOption)
 
 def plural(seq: Seq[Any]): String = if (seq.length > 1) "s" else ""
 
-def scaffold(days: Seq[Int]): Unit =
-  FileManager.readSessionKey() match
+def scaffold(
+    args: Seq[String],
+    sessionKey: Option[String] = None,
+    onlyInputs: Boolean = false
+): Unit =
+  sessionKey.orElse(FileManager.readSessionKey()) match
     case None =>
       println(s"Please fill session key in ${FileManager.SESSION_KEY_FILENAME}")
       FileManager.writeToUtf8File(
@@ -44,14 +48,20 @@ def scaffold(days: Seq[Int]): Unit =
       )
 
     case Some(sessionKey) =>
-      val scaffolder = Scaffolder(sessionKey)
-      val resolvedDays = days.length match
-        case 0 => Seq(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
-        case _ => days
+      args.headOption.map(_.toLowerCase) match
+        case Some("input") => scaffold(args.drop(1), Some(sessionKey), onlyInputs = true)
+        case Some("inputs") =>
+          scaffold(solutionMap.keySet.toSeq.sorted.map(_.toString), onlyInputs = true)
+        case _ =>
+          val days = getDays(args)
+          val scaffolder = Scaffolder(sessionKey)
+          val resolvedDays = days.length match
+            case 0 => Seq(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
+            case _ => days
 
-      println(s"Scaffolding day${plural(days)} ${days.mkString(", ")}...")
-      resolvedDays.foreach(scaffolder.scaffoldDay(_))
-      FileManager.createIndexFile()
+          println(s"Scaffolding day${plural(days)} ${days.mkString(", ")}...")
+          resolvedDays.foreach(scaffolder.scaffoldDay(_, onlyInputs))
+          if (!onlyInputs) FileManager.createIndexFile()
 
 def solveDays(days: Seq[Int]) =
   for (day <- days)
