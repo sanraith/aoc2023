@@ -11,7 +11,7 @@ Solutions for Advent of Code 2023 in Scala.
   - [ ] Load title from web
   - [x] Add caching for loading
   - [ ] Load test data from web
-  - [ ] Load real data from web
+  - [x] Load real data from web
 - [ ] Test framework
   - [x] Use test data starting with line break
   - [ ] Use real data

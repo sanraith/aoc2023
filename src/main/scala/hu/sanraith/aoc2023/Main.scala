@@ -35,27 +35,22 @@ def getDays(seq: Seq[String]): Seq[Int] = seq.flatMap(_.toIntOption)
 def plural(seq: Seq[Any]): String = if (seq.length > 1) "s" else ""
 
 def scaffold(days: Seq[Int]): Unit =
-  val resolvedDays = FileManager.readSessionKey() match
+  FileManager.readSessionKey() match
     case None =>
       println(s"Please fill session key in ${FileManager.SESSION_KEY_FILENAME}")
       FileManager.writeToUtf8File(
         Paths.get(FileManager.SESSION_KEY_FILENAME),
         "YOUR_SESSION_KEY_HERE"
       )
-      Seq()
 
     case Some(sessionKey) =>
+      val scaffolder = Scaffolder(sessionKey)
       val resolvedDays = days.length match
         case 0 => Seq(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
         case _ => days
 
       println(s"Scaffolding day${plural(days)} ${days.mkString(", ")}...")
-      resolvedDays.foreach: day =>
-        WebClient(sessionKey).requestCached(s"2022/day/$day") match
-          case None => println(s"Unable to scaffold day $day")
-          case Some(body) =>
-            FileManager.createSolutionFile(day, "Unknown Title") // TODO get title
-            FileManager.createTestFile(day) // TODO get test input, expected result
+      resolvedDays.foreach(scaffolder.scaffoldDay(_))
       FileManager.createIndexFile()
 
 def solveDays(days: Seq[Int]) =

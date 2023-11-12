@@ -1,6 +1,6 @@
 # Advent of Code
 .cache/
-inputs/
+input/
 sessionKey.txt
 
 # bloop and metals

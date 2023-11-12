@@ -14,8 +14,14 @@
         "src/test/java/**": true,
         "src/test/resources/**": true,
     },
+    "editor.indentSize": 2,
     "metals.showInferredType": "true",
     "cSpell.words": [
-        "sanraith"
-    ]
+        "sanraith",
+        "Scaffolder",
+    ],
+    "cSpell.files": [
+        "*.scala",
+        "README.md"
+    ],
 }

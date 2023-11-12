@@ -1,7 +1,6 @@
 package hu.sanraith.aoc2023.cli
 
 import java.nio.file._
-import scala.jdk.CollectionConverters.*
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.{Files, Paths}
 import scala.util.Try
@@ -26,6 +25,11 @@ object FileManager:
   )
   private val testRoot =
     Paths.get("src", "test", namespacePart.toString, "solution")
+
+  def createInputFile(day: Int, contents: String) =
+    val dayStr = getDayStr(day)
+    val path = Paths.get(s"input/Day$dayStr.txt")
+    writeToUtf8File(path, contents)
 
   def createSolutionFile(day: Int, title: String) =
     val dayStr = getDayStr(day)
@@ -81,22 +85,25 @@ object FileManager:
     writeToUtf8File(solutionPath, contents)
 
   def createIndexFile() =
-    val classNameList = Files
-      .list(root.resolve(solutionRoot))
-      .filter(Files.isRegularFile(_))
-      .toList
-      .asScala
-      .flatMap(x =>
-        dayFileClassNameRegex
-          .findFirstMatchIn(x.getFileName.toString)
-          .map(_.group(1))
-      )
+    val classNameList =
+      import scala.jdk.CollectionConverters._
+      Files
+        .list(root.resolve(solutionRoot))
+        .iterator
+        .asScala
+        .filter(Files.isRegularFile(_))
+        .flatMap(x =>
+          dayFileClassNameRegex
+            .findFirstMatchIn(x.getFileName.toString)
+            .map(_.group(1))
+        )
+        .toSeq
 
     // Get template for Index file
     val indexFilePath: Path = Paths.get(
       namespacePart.toString,
       "solution",
-      "Index.Scala"
+      "Index.scala"
     )
     val templatePath = root.resolve(
       Paths.get(templateRoot.toString(), indexFilePath.toString())
@@ -106,7 +113,7 @@ object FileManager:
     // Fill template with class list and save it
     val contents = TemplateFiller(template)
       .fill("__SOLUTION_CLASS_LIST__", classNameList.map(x => s"classOf[$x]"))
-      .toString()
+      .toString
     val resultPath = root.resolve(
       Paths.get(sourcePart.toString(), indexFilePath.toString())
     )
