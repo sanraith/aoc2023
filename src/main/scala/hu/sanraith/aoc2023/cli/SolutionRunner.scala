@@ -24,39 +24,48 @@ object SolutionRunner:
   private def runPart(part: Int, solution: Solution, context: ConsoleContext): Unit =
     context.isCompleted = false
     context.progress = None
+    val statusLine = LineRewriter()
 
-    val start = System.nanoTime()
-    val workFuture = Future:
-      val result =
-        try
-          part match
-            case 1 => solution.part1(context)
-            case _ => solution.part2(context)
-        catch e => e.toString
-      context.isCompleted = true
-      (result, System.nanoTime())
+    val resultFuture = runPartAsync(part, solution, context)
+    val progressFuture = showProgressAsync(part, context, statusLine)
+    val combinedFuture = for
+      x <- resultFuture
+      _ <- progressFuture
+    yield x
+    val (result, duration) = Await.result(combinedFuture, Duration.Inf)
 
-    val sameLine = LineRewriter()
-    val progressFuture = Future:
-      while (!context.isCompleted)
-        val time = timeStr(start, System.nanoTime())
-        val percentage = context.progress.map(x => f" ${x * 100}%2.2f%%").getOrElse("")
-        sameLine.print(s"Part $part... ($time)$percentage")
-        Thread.sleep(75)
-
-    val (result, end) = Await.result(workFuture, Duration.Inf)
-    Try(Await.ready(progressFuture, Duration.create(5, TimeUnit.SECONDS)))
-
-    val lineStart = s"Part $part (${timeStr(start, end)}): "
+    val lineStart = s"Part $part (${timeStr(duration)}): "
     val formattedResult = result match
       case Util.includesNewLineRegex(lines) =>
         lines.split("\n").mkString("\n".padTo(lineStart.length + 1, ' '))
       case line => line
+    statusLine.println(s"$lineStart$formattedResult")
 
-    sameLine.println(s"$lineStart$formattedResult")
-  end runPart
+  private def runPartAsync(part: Int, solution: Solution, context: ConsoleContext) = Future:
+    val start = System.nanoTime()
+    val result =
+      try
+        part match
+          case 1 => solution.part1(context)
+          case _ => solution.part2(context)
+      catch e => e.toString
+    context.isCompleted = true
+    (result, System.nanoTime() - start)
 
-  def timeStr(start: Long, end: Long): String = s"${(end - start) / 1000000} ms"
+  private def showProgressAsync(
+      part: Int,
+      context: ConsoleContext,
+      statusLine: LineRewriter
+  ): Future[Unit] = Future:
+    val start = System.nanoTime()
+    while (!context.isCompleted)
+      val time = timeStr(start, System.nanoTime())
+      val percentage = context.progress.map(x => f" ${x * 100}%2.2f%%").getOrElse("")
+      statusLine.print(s"Part $part... ($time)$percentage")
+      Thread.sleep(75)
+
+  def timeStr(start: Long, end: Long): String = timeStr(end - start)
+  def timeStr(duration: Long): String = s"${duration / 1000000} ms"
 
 /** Prints content to the same console line until println is called. */
 class LineRewriter:
@@ -67,7 +76,9 @@ class LineRewriter:
     prevLength = line.length
 
   def println(line: String): Unit =
-    print(s"$line\n")
+    print(line)
+    Predef.println
+    prevLength = 0
 
 class ConsoleContext(val input: String) extends Context:
   var progress: Option[Double] = None
