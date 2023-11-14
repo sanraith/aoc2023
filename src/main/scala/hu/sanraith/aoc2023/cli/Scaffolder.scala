@@ -5,16 +5,16 @@ import scala.util.Try
 import hu.sanraith.aoc2023.common._
 
 class Scaffolder(sessionKey: String):
-  def scaffoldDay(day: Int, onlyInputs: Boolean): Unit =
+  def scaffoldDay(day: Int, onlyInputs: Boolean, invalidateCache: Boolean): Unit =
     val client = WebClient(sessionKey)
     val inputPath = client
-      .requestCached(s"${Util.currentYear}/day/$day/input")
+      .requestCached(s"${Util.currentYear}/day/$day/input", invalidateCache)
       .map(FileManager.createInputFile(day, _))
     if (inputPath.isEmpty) println(s"Unable to scaffold inputs for day $day")
 
     if (!onlyInputs)
       client
-        .requestCached(s"${Util.currentYear}/day/$day")
+        .requestCached(s"${Util.currentYear}/day/$day", invalidateCache)
         .map(HtmlParser.parsePuzzlePage)
         .flatten match
         case Some(puzzle) =>

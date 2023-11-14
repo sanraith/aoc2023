@@ -21,9 +21,9 @@ def main(args: String*) =
     case Some("last") =>
       println("Solving last available day...")
       solveDays(Seq(solutionMap.keySet.toSeq.sorted.last))
-    case Some("scaffold")           => scaffold(args.drop(1))
-    case Some("day") | Some("days") => solveDays(getDays(args.drop(1)))
-    case Some(dayRegex(day))        => solveDays(getDays(args))
+    case Some("scaffold")    => scaffold(args.drop(1))
+    case Some("day")         => solveDays(getDays(args.drop(1)))
+    case Some(dayRegex(day)) => solveDays(getDays(args))
     case Some(_) =>
       println(s"Unknown parameter sequence: ${args.mkString(", ")}")
   println
@@ -37,7 +37,8 @@ def plural(seq: Seq[Any]): String = if (seq.length > 1) "s" else ""
 def scaffold(
     args: Seq[String],
     sessionKey: Option[String] = None,
-    onlyInputs: Boolean = false
+    onlyInputs: Boolean = false,
+    invalidateCache: Boolean = false
 ): Unit =
   sessionKey.orElse(FileManager.readSessionKey()) match
     case None =>
@@ -49,18 +50,30 @@ def scaffold(
 
     case Some(sessionKey) =>
       args.headOption.map(_.toLowerCase) match
-        case Some("input") => scaffold(args.drop(1), Some(sessionKey), onlyInputs = true)
+        case Some("reload") =>
+          scaffold(args.drop(1), Some(sessionKey), onlyInputs, invalidateCache = true)
+        case Some("input") =>
+          scaffold(args.drop(1), Some(sessionKey), onlyInputs = true, invalidateCache)
         case Some("inputs") =>
-          scaffold(solutionMap.keySet.toSeq.sorted.map(_.toString), onlyInputs = true)
+          scaffold(
+            solutionMap.keySet.toSeq.sorted.map(_.toString),
+            onlyInputs = true,
+            invalidateCache
+          )
         case _ =>
           val days = getDays(args)
           val scaffolder = Scaffolder(sessionKey)
           val resolvedDays = days.length match
-            case 0 => Seq(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
+            case 0 =>
+              Seq(
+                solutionMap.keySet.toSeq.sorted.lastOption
+                  .map(day => Math.min(day + 1, 25))
+                  .getOrElse(1)
+              )
             case _ => days
 
           println(s"Scaffolding day${plural(days)} ${days.mkString(", ")}...")
-          resolvedDays.foreach(scaffolder.scaffoldDay(_, onlyInputs))
+          resolvedDays.foreach(scaffolder.scaffoldDay(_, onlyInputs, invalidateCache))
           if (!onlyInputs) FileManager.createIndexFile()
 
 def solveDays(days: Seq[Int]) =

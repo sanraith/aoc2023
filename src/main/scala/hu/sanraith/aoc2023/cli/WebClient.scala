@@ -31,22 +31,22 @@ class WebClient(sessionCookie: String) {
       .cookieHandler(CookieHandler.getDefault())
       .build()
 
-  def requestCached(subUrl: String): Option[String] =
+  def requestCached(subUrl: String, invalidateCache: Boolean = false): Option[String] =
     val cachedFileName = s"${subUrl.replace("/", "_")}.txt"
     val cachedFilePath = Paths.get(CACHE_DIR, cachedFileName)
     val url = URI(ADVENT_OF_CODE_ROOT).resolve(subUrl).toURL()
 
-    Try(FileManager.readUtf8File(cachedFilePath)) match
-      case Success(body) =>
+    Try((FileManager.readUtf8File(cachedFilePath), invalidateCache)) match
+      case (Success(body, false)) =>
         println(s"Using cached '${cachedFilePath.toString}' instead of $url")
         Some(body)
 
-      case Failure(_) =>
+      case _ =>
         request(url) match
           case (200, body) =>
             FileManager.writeToUtf8File(cachedFilePath, body)
             Some(body)
-          case statusCode =>
+          case (statusCode, _) =>
             println(s"Status code $statusCode returned from $url")
             None
 
