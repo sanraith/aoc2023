@@ -8,6 +8,7 @@ abstract class Solution:
   val title: String
   def part1(ctx: Context): String
   def part2(ctx: Context): String
+  var println: Any => Unit = msg => Predef.println(msg)
 
 sealed class SolutionInfo(
     val classDef: Class[?],

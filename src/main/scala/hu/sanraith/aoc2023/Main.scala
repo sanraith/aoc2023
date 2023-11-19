@@ -72,7 +72,7 @@ def scaffold(
               )
             case _ => days
 
-          println(s"Scaffolding day${plural(days)} ${days.mkString(", ")}...")
+          println(s"Scaffolding day${plural(resolvedDays)} ${resolvedDays.mkString(", ")}...")
           resolvedDays.foreach(scaffolder.scaffoldDay(_, onlyInputs, invalidateCache))
           if (!onlyInputs) FileManager.createIndexFile()
 

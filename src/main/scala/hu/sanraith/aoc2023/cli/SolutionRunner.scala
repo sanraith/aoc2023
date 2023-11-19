@@ -3,7 +3,8 @@ package hu.sanraith.aoc2023.cli
 import hu.sanraith.aoc2023.common._
 import hu.sanraith.aoc2023.solution._
 
-import java.util.concurrent.TimeUnit
+import java.util.concurrent._
+import scala.collection.immutable.LazyList
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -15,16 +16,15 @@ import scala.util.Try
 object SolutionRunner:
   def run(solution: Solution) =
     val input = Util.loadInputFromFile(solution)
-    val context = ConsoleContext(input)
     try
-      runPart(1, solution, context)
-      runPart(2, solution, context)
+      runPart(1, solution, input)
+      runPart(2, solution, input)
     catch case e => println(e)
 
-  private def runPart(part: Int, solution: Solution, context: ConsoleContext): Unit =
-    context.isCompleted = false
-    context.progress = None
+  private def runPart(part: Int, solution: Solution, input: String): Unit =
+    val context = ConsoleContext(input)
     val statusLine = LineRewriter()
+    solution.println = msg => context.debugMessageQueue.add(msg.toString)
 
     val resultFuture = runPartAsync(part, solution, context)
     val progressFuture = showProgressAsync(part, context, statusLine)
@@ -61,15 +61,17 @@ object SolutionRunner:
     while (!context.isCompleted)
       val time = timeStr(start, System.nanoTime())
       val percentage = context.progress.map(x => f" ${x * 100}%2.2f%%").getOrElse("")
+      context.printDebugMessages(statusLine)
       statusLine.print(s"Part $part... ($time)$percentage")
       Thread.sleep(75)
+    context.printDebugMessages(statusLine)
 
   def timeStr(start: Long, end: Long): String = timeStr(end - start)
   def timeStr(duration: Long): String = s"${duration / 1000000} ms"
 
 /** Prints content to the same console line until println is called. */
 class LineRewriter:
-  var prevLength: Int = 0
+  private var prevLength: Int = 0
 
   def print(line: String): Unit =
     Predef.print(s"\r${line.padTo(prevLength, ' ')}")
@@ -81,6 +83,14 @@ class LineRewriter:
     prevLength = 0
 
 class ConsoleContext(val input: String) extends Context:
+  val debugMessageQueue: ConcurrentLinkedQueue[String] = ConcurrentLinkedQueue()
   var progress: Option[Double] = None
   var isCompleted: Boolean = false
+
+  def printDebugMessages(statusLine: LineRewriter) = LazyList
+    .from(1)
+    .map(_ => debugMessageQueue.poll)
+    .takeWhile(x => x != null)
+    .foreach(statusLine.println)
+
   override def progress(value: Double): Unit = progress = Some(value)
