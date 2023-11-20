@@ -12,16 +12,19 @@ import scala.concurrent.duration.Duration
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
+import scala.concurrent.duration.FiniteDuration
 
 object SolutionRunner:
-  def run(solution: Solution) =
+  def run(solution: Solution): FiniteDuration =
     val input = Util.loadInputFromFile(solution)
+    var duration = Duration.Zero
     try
-      runPart(1, solution, input)
-      runPart(2, solution, input)
+      duration += runPart(1, solution, input)
+      duration += runPart(2, solution, input)
     catch case e => println(e)
+    duration
 
-  private def runPart(part: Int, solution: Solution, input: String): Unit =
+  private def runPart(part: Int, solution: Solution, input: String): FiniteDuration =
     val context = ConsoleContext(input)
     val statusLine = LineRewriter()
     solution.println = msg => context.debugMessageQueue.add(msg.toString)
@@ -34,14 +37,20 @@ object SolutionRunner:
     yield x
     val (result, duration) = Await.result(combinedFuture, Duration.Inf)
 
-    val lineStart = s"Part $part (${timeStr(duration)}): "
+    val timeStr = s"(${Util.timeStr(duration)})".reverse.padTo(9, ' ').reverse
+    val lineStart = s"Part $part $timeStr: "
     val formattedResult = result match
       case Util.includesNewLineRegex(lines) =>
         lines.split("\n").mkString("\n".padTo(lineStart.length + 1, ' '))
       case line => line
     statusLine.println(s"$lineStart$formattedResult")
+    duration
 
-  private def runPartAsync(part: Int, solution: Solution, context: ConsoleContext) = Future:
+  private def runPartAsync(
+      part: Int,
+      solution: Solution,
+      context: ConsoleContext
+  ): Future[(String, FiniteDuration)] = Future:
     val start = System.nanoTime()
     val result =
       try
@@ -50,7 +59,8 @@ object SolutionRunner:
           case _ => solution.part2(context)
       catch e => e.toString
     context.isCompleted = true
-    (result, System.nanoTime() - start)
+    val duration = Duration.fromNanos(System.nanoTime() - start)
+    (result, duration)
 
   private def showProgressAsync(
       part: Int,
@@ -59,15 +69,12 @@ object SolutionRunner:
   ): Future[Unit] = Future:
     val start = System.nanoTime()
     while (!context.isCompleted)
-      val time = timeStr(start, System.nanoTime())
+      val time = Util.timeStr(start, System.nanoTime())
       val percentage = context.progress.map(x => f" ${x * 100}%2.2f%%").getOrElse("")
       context.printDebugMessages(statusLine)
       statusLine.print(s"Part $part... ($time)$percentage")
       Thread.sleep(75)
     context.printDebugMessages(statusLine)
-
-  def timeStr(start: Long, end: Long): String = timeStr(end - start)
-  def timeStr(duration: Long): String = s"${duration / 1000000} ms"
 
 /** Prints content to the same console line until println is called. */
 class LineRewriter:

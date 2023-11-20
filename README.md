@@ -26,7 +26,7 @@ Use `sbt <command>`, or start `sbt` and enter one of the commands:
   
 - Scaffold solutions:  
  Create solution, test and input files by getting info from [adventofcode.com](https://adventofcode.com).  
-`run scaffold [reload] [ <days...> | input [<days...>] | inputs [<days...>] ]`
+`run scaffold [reload] [ <days...> | input [<days...>] | inputs ]`
 
 ### Examples
 

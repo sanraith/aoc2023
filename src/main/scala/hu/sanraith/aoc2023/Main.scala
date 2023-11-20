@@ -1,9 +1,13 @@
 package hu.sanraith.aoc2023
 
 import hu.sanraith.aoc2023.cli._
+import hu.sanraith.aoc2023.common.Util
 import hu.sanraith.aoc2023.solution._
+
 import java.nio.file.Paths
 import java.util.Calendar
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration.FiniteDuration
 
 @main
 def main(args: String*) =
@@ -77,10 +81,14 @@ def scaffold(
           if (!onlyInputs) FileManager.createIndexFile()
 
 def solveDays(days: Seq[Int]) =
-  for (day <- days)
-    solutionMap.get(day) match
-      case Some(solutionInfo) =>
-        val solution = solutionMap(day).createInstance()
-        println(s"\n--- Day $day: ${solution.title} ---")
-        SolutionRunner.run(solution)
-      case None => println(s"\nNo solution found for day $day!")
+  val totalDuration = days
+    .map: day =>
+      solutionMap.get(day) match
+        case Some(solutionInfo) =>
+          val solution = solutionInfo.createInstance()
+          println(s"\n--- Day $day: ${solution.title} ---")
+          SolutionRunner.run(solution)
+        case None => println(s"\nNo solution found for day $day!")
+    .collect { case duration: FiniteDuration => duration }
+    .fold(Duration.Zero)((a, x) => a + x)
+  println(s"\nTotal solution time: ${Util.timeStr(totalDuration)}")
