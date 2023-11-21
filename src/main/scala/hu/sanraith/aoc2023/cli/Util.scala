@@ -1,4 +1,4 @@
-package hu.sanraith.aoc2023.common
+package hu.sanraith.aoc2023.cli
 
 import hu.sanraith.aoc2023.solution.Solution
 
@@ -10,16 +10,16 @@ import scala.util.matching.Regex
 object Util:
   val includesNewLineRegex: Regex = """^([\s\S]*\n[\s\S]*)$""".r
   val classDayRegex: Regex = """^.*?(\d+)$""".r
-  val currentYear: Int = 2022
+  val currentYear: Int = 2023
 
-  val DURATION_SCALES: Seq[(Long, String, Int)] = Seq(
+  private val DURATION_SCALES: Seq[(Long, String, Int)] = Seq(
     (60_000_000_000L, "min", 2),
     (1_000_000_000, "s", 3),
     (1_000_000, "ms", 0),
     (1_000, "μs", 0),
     (1, "ns", 0)
   )
-  val MIN_DURATION_SCALE = DURATION_SCALES.last._1
+  private val MIN_DURATION_SCALE = DURATION_SCALES.last._1
 
   def loadInputFromFile(solution: Solution) =
     val className = solution.getClass().getName()

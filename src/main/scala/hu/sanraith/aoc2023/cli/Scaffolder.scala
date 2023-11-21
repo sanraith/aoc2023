@@ -2,7 +2,6 @@ package hu.sanraith.aoc2023.cli
 
 import sys.process._
 import scala.util.Try
-import hu.sanraith.aoc2023.common._
 
 class Scaffolder(sessionKey: String):
   def scaffoldDay(day: Int, onlyInputs: Boolean, invalidateCache: Boolean): Unit =

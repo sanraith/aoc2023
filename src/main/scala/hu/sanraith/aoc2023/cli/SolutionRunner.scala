@@ -1,6 +1,5 @@
 package hu.sanraith.aoc2023.cli
 
-import hu.sanraith.aoc2023.common._
 import hu.sanraith.aoc2023.solution._
 
 import java.util.concurrent._

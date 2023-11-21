@@ -37,8 +37,6 @@ object FileManager:
       root.resolve(
         Paths.get(
           templateRoot.toString,
-          namespacePart.toString,
-          "solution",
           "Day__DAY_STR__.scala"
         )
       )
@@ -65,8 +63,6 @@ object FileManager:
       root.resolve(
         Paths.get(
           templateRoot.toString,
-          namespacePart.toString,
-          "solution",
           "DAY__DAY_STR__Test.scala"
         )
       )
@@ -100,13 +96,8 @@ object FileManager:
         .toSeq
 
     // Get template for Index file
-    val indexFilePath: Path = Paths.get(
-      namespacePart.toString,
-      "solution",
-      "Index.scala"
-    )
     val templatePath = root.resolve(
-      Paths.get(templateRoot.toString(), indexFilePath.toString())
+      Paths.get(templateRoot.toString(), "Index.scala")
     )
     val template = readUtf8File(templatePath)
 
@@ -115,7 +106,7 @@ object FileManager:
       .fill("__SOLUTION_CLASS_LIST__", classNameList.map(x => s"classOf[$x]"))
       .toString
     val resultPath = root.resolve(
-      Paths.get(sourcePart.toString(), indexFilePath.toString())
+      Paths.get(sourcePart.toString(), namespacePart.toString, "solution", "Index.scala")
     )
     writeToUtf8File(resultPath, contents)
 

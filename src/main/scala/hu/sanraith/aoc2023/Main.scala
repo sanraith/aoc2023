@@ -1,7 +1,6 @@
 package hu.sanraith.aoc2023
 
 import hu.sanraith.aoc2023.cli._
-import hu.sanraith.aoc2023.common.Util
 import hu.sanraith.aoc2023.solution._
 
 import java.nio.file.Paths
@@ -54,6 +53,9 @@ def scaffold(
 
     case Some(sessionKey) =>
       args.headOption.map(_.toLowerCase) match
+        case Some("index") =>
+          println("Scaffolding solution index...")
+          FileManager.createIndexFile()
         case Some("reload") =>
           scaffold(args.drop(1), Some(sessionKey), onlyInputs, invalidateCache = true)
         case Some("input") =>
@@ -91,4 +93,8 @@ def solveDays(days: Seq[Int]) =
         case None => println(s"\nNo solution found for day $day!")
     .collect { case duration: FiniteDuration => duration }
     .fold(Duration.Zero)((a, x) => a + x)
-  println(s"\nTotal solution time: ${Util.timeStr(totalDuration)}")
+
+  if (days.nonEmpty)
+    println(s"\nTotal solution time: ${Util.timeStr(totalDuration)}")
+  else
+    println("\nNo solutions available!\nUse `run scaffold 1` to scaffold files for day 1.")

@@ -1,14 +1,18 @@
 package hu.sanraith.aoc2023
 
+import hu.sanraith.aoc2023.cli.Util
 import hu.sanraith.aoc2023.solution._
 import org.scalatest.funspec.AnyFunSpec
+
 import scala.util.matching.Regex
-import hu.sanraith.aoc2023.common._
 
 abstract class SolutionTestSpec extends AnyFunSpec {
   private val leadingNewLineRegex: Regex = """(?s)^\s*(?:\n|\r\n)(.*)$""".r
   private val classDayRegex: Regex = """^.*?(\d+)$""".r
 
+  /** Asserts that the given part returns the expected output for the given input. Uses puzzle input
+    * from `input/Day<day>.txt` if no input provided.
+    */
   def assertPart(
       part: (Context) => String,
       expected: String,
@@ -18,7 +22,7 @@ abstract class SolutionTestSpec extends AnyFunSpec {
     val actual = part(TestContext(resolvedInput))
     assertResult(trim(expected))(actual)
 
-  /** Pending assert */
+  /** PENDING assert, remove "_" to make test active. */
   def _assertPart(
       part: (Context) => String,
       expected: String,
