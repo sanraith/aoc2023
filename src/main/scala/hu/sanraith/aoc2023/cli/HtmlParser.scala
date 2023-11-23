@@ -26,7 +26,7 @@ object HtmlParser:
           .asScala
           .filter(!_.children.isEmpty)
           .headOption
-          .map(_.textNodes.asScala.mkString(" "))
+          .map(_.text)
           .map(x => (x.toLowerCase.contains("example"), elem.textNodes().asScala.mkString("")))
       )
       .flatten
@@ -49,10 +49,9 @@ object HtmlParser:
     val test_expected = document
       .select("article:first-of-type em")
       .asScala
-      .map(_.textNodes.asScala.mkString(" "))
+      .map(_.text.trim)
       .filter(ends_with_question_regex.findFirstMatchIn(_).isEmpty)
       .lastOption
-      .map(_.trim)
       .getOrElse("")
 
     titleOption.map(title =>

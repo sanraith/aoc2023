@@ -96,7 +96,7 @@ class ConsoleContext(val input: String) extends Context:
   def printDebugMessages(statusLine: LineRewriter) = LazyList
     .from(1)
     .map(_ => debugMessageQueue.poll)
-    .takeWhile(x => x != null)
+    .takeWhile(_ != null)
     .foreach(statusLine.println)
 
   override def progress(value: Double): Unit = progress = Some(value)

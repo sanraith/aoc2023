@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Last solution",
+            "type": "scala",
+            "request": "launch",
+            "mainClass": "hu.sanraith.aoc2023.main",
+            "args": [
+                "last"
+            ],
+        }
+    ]
+}
