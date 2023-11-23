@@ -20,10 +20,10 @@ def main(args: String*) =
   firstArg match
     case Some("all") | None =>
       println("Solving all available days...")
-      solveDays(solutionMap.keySet.toSeq.sorted)
+      solveDays(SolutionMap.keySet.toSeq.sorted)
     case Some("last") =>
       println("Solving last available day...")
-      solveDays(Seq(solutionMap.keySet.toSeq.sorted.last))
+      solveDays(Seq(SolutionMap.keySet.toSeq.sorted.last))
     case Some("scaffold")    => scaffold(args.drop(1))
     case Some("day")         => solveDays(getDays(args.drop(1)))
     case Some(dayRegex(day)) => solveDays(getDays(args))
@@ -45,9 +45,9 @@ def scaffold(
 ): Unit =
   sessionKey.orElse(FileManager.readSessionKey()) match
     case None =>
-      println(s"Please fill session key in ${FileManager.SESSION_KEY_FILENAME}")
+      println(s"Please fill session key in ${FileManager.SessionKeyFilename}")
       FileManager.writeToUtf8File(
-        Paths.get(FileManager.SESSION_KEY_FILENAME),
+        Paths.get(FileManager.SessionKeyFilename),
         "YOUR_SESSION_KEY_HERE"
       )
 
@@ -62,7 +62,7 @@ def scaffold(
           scaffold(args.drop(1), Some(sessionKey), onlyInputs = true, invalidateCache)
         case Some("inputs") =>
           scaffold(
-            solutionMap.keySet.toSeq.sorted.map(_.toString),
+            SolutionMap.keySet.toSeq.sorted.map(_.toString),
             onlyInputs = true,
             invalidateCache
           )
@@ -72,7 +72,7 @@ def scaffold(
           val resolvedDays = days.length match
             case 0 =>
               Seq(
-                solutionMap.keySet.toSeq.sorted.lastOption
+                SolutionMap.keySet.toSeq.sorted.lastOption
                   .map(day => Math.min(day + 1, 25))
                   .getOrElse(1)
               )
@@ -85,7 +85,7 @@ def scaffold(
 def solveDays(days: Seq[Int]) =
   val totalDuration = days
     .map: day =>
-      solutionMap.get(day) match
+      SolutionMap.get(day) match
         case Some(solutionInfo) =>
           val solution = solutionInfo.createInstance()
           println(s"\n--- Day $day: ${solution.title} ---")

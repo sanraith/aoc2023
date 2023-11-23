@@ -7,8 +7,8 @@ import org.scalatest.funspec.AnyFunSpec
 import scala.util.matching.Regex
 
 abstract class SolutionTestSpec extends AnyFunSpec {
-  private val leadingNewLineRegex: Regex = """(?s)^\s*(?:\n|\r\n)(.*)$""".r
-  private val classDayRegex: Regex = """^.*?(\d+)$""".r
+  private val LeadingNewLineRegex: Regex = """(?s)^\s*(?:\n|\r\n)(.*)$""".r
+  private val ClassDayRegex: Regex = """^.*?(\d+)$""".r
 
   /** Asserts that the given part returns the expected output for the given input. Uses puzzle input
     * from `input/Day<day>.txt` if no input provided.
@@ -31,7 +31,7 @@ abstract class SolutionTestSpec extends AnyFunSpec {
 
   /** Trim the starting newline from a string. Allows easier-to-read declaration with """...""" */
   private def trim(text: String): String =
-    leadingNewLineRegex.findFirstMatchIn(text) match
+    LeadingNewLineRegex.findFirstMatchIn(text) match
       case Some(m) => m.group(1)
       case None    => text
 }

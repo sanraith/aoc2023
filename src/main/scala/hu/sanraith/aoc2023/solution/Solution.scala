@@ -17,9 +17,9 @@ sealed class SolutionInfo(
   def createInstance(): Solution = classDef.newInstance().asInstanceOf[Solution]
   override def toString(): String = s"Day #$day"
 
-val solutionMap =
+val SolutionMap =
   val dayRegex = """([1-9]\d*)$""".r
-  solutionClasses
+  SolutionClasses
     .map(c => (c, dayRegex.findFirstIn(c.getName()).map(_.toInt)))
     .collect { case (c, Some(day)) => (day, SolutionInfo(c, day)) }
     .toMap

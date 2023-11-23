@@ -8,9 +8,9 @@ import java.time.Duration
 import scala.util._
 
 class WebClient(sessionCookie: String) {
-  private val CACHE_DIR = ".cache"
-  private val ADVENT_OF_CODE_ROOT = "https://adventofcode.com/"
-  private val USER_AGENT =
+  private val CacheDir = ".cache"
+  private val AdventOfCodeRoot = "https://adventofcode.com/"
+  private val UserAgent =
     "https://github.com/sanraith/aoc2023 by sanraith@users.noreply.github.com"
 
   private val client =
@@ -23,7 +23,7 @@ class WebClient(sessionCookie: String) {
       .getDefault()
       .asInstanceOf[CookieManager]
       .getCookieStore()
-      .add(new URI(ADVENT_OF_CODE_ROOT), cookie);
+      .add(new URI(AdventOfCodeRoot), cookie);
 
     HttpClient
       .newBuilder()
@@ -33,8 +33,8 @@ class WebClient(sessionCookie: String) {
 
   def requestCached(subUrl: String, invalidateCache: Boolean = false): Option[String] =
     val cachedFileName = s"${subUrl.replace("/", "_")}.txt"
-    val cachedFilePath = Paths.get(CACHE_DIR, cachedFileName)
-    val url = URI(ADVENT_OF_CODE_ROOT).resolve(subUrl).toURL()
+    val cachedFilePath = Paths.get(CacheDir, cachedFileName)
+    val url = URI(AdventOfCodeRoot).resolve(subUrl).toURL()
 
     Try((FileManager.readUtf8File(cachedFilePath), invalidateCache)) match
       case (Success(body, false)) =>
@@ -54,7 +54,7 @@ class WebClient(sessionCookie: String) {
     println(s"Loading $url")
     val request = HttpRequest
       .newBuilder(url.toURI)
-      .setHeader("User-Agent", USER_AGENT)
+      .setHeader("User-Agent", UserAgent)
       .build();
     val response = client.send(request, BodyHandlers.ofString)
     (response.statusCode, response.body)

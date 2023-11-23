@@ -8,23 +8,23 @@ import scala.util.Failure
 import scala.util.Success
 
 object FileManager:
-  val SESSION_KEY_FILENAME = "sessionKey.txt"
+  val SessionKeyFilename = "sessionKey.txt"
 
-  private val dayFileClassNameRegex = """^(Day\d+).scala$""".r
-  private val root = Paths.get(System.getProperty("user.dir"))
+  private val DayFileClassNameRegex = """^(Day\d+).scala$""".r
+  private val Root = Paths.get(System.getProperty("user.dir"))
 
-  private val sourcePart = Paths.get("src", "main")
-  private val namespacePart =
+  private val SourcePart = Paths.get("src", "main")
+  private val NamespacePart =
     Paths.get("scala", "hu", "sanraith", "aoc2023")
 
-  private val templateRoot = Paths.get("src", "templates")
-  private val solutionRoot = Paths.get(
-    sourcePart.toString,
-    namespacePart.toString,
+  private val TemplateRoot = Paths.get("src", "templates")
+  private val SolutionRoot = Paths.get(
+    SourcePart.toString,
+    NamespacePart.toString,
     "solution"
   )
-  private val testRoot =
-    Paths.get("src", "test", namespacePart.toString, "solution")
+  private val TestRoot =
+    Paths.get("src", "test", NamespacePart.toString, "solution")
 
   def createInputFile(day: Int, contents: String): Path =
     val dayStr = getDayStr(day)
@@ -34,9 +34,9 @@ object FileManager:
   def createSolutionFile(day: Int, title: String): Path =
     val dayStr = getDayStr(day)
     val templatePath =
-      root.resolve(
+      Root.resolve(
         Paths.get(
-          templateRoot.toString,
+          TemplateRoot.toString,
           "Day__DAY_STR__.scala"
         )
       )
@@ -46,7 +46,7 @@ object FileManager:
       .fill("__TITLE__", title)
       .toString
     val solutionPath =
-      root.resolve(Paths.get(solutionRoot.toString, s"Day$dayStr.scala"))
+      Root.resolve(Paths.get(SolutionRoot.toString, s"Day$dayStr.scala"))
     writeToUtf8File(solutionPath, contents)
 
   def createTestFile(
@@ -60,9 +60,9 @@ object FileManager:
   ): Path =
     val dayStr = getDayStr(day)
     val templatePath =
-      root.resolve(
+      Root.resolve(
         Paths.get(
-          templateRoot.toString,
+          TemplateRoot.toString,
           "DAY__DAY_STR__Test.scala"
         )
       )
@@ -77,27 +77,27 @@ object FileManager:
       .fill("__PART_2_EXPECTED__", part2Expected)
       .toString
     val solutionPath =
-      root.resolve(Paths.get(testRoot.toString, s"Day${dayStr}Test.scala"))
+      Root.resolve(Paths.get(TestRoot.toString, s"Day${dayStr}Test.scala"))
     writeToUtf8File(solutionPath, contents)
 
   def createIndexFile() =
     val classNameList =
       import scala.jdk.CollectionConverters._
       Files
-        .list(root.resolve(solutionRoot))
+        .list(Root.resolve(SolutionRoot))
         .iterator
         .asScala
         .filter(Files.isRegularFile(_))
         .flatMap(x =>
-          dayFileClassNameRegex
+          DayFileClassNameRegex
             .findFirstMatchIn(x.getFileName.toString)
             .map(_.group(1))
         )
         .toSeq
 
     // Get template for Index file
-    val templatePath = root.resolve(
-      Paths.get(templateRoot.toString(), "Index.scala")
+    val templatePath = Root.resolve(
+      Paths.get(TemplateRoot.toString(), "Index.scala")
     )
     val template = readUtf8File(templatePath)
 
@@ -105,8 +105,8 @@ object FileManager:
     val contents = TemplateFiller(template)
       .fill("__SOLUTION_CLASS_LIST__", classNameList.map(x => s"classOf[$x]"))
       .toString
-    val resultPath = root.resolve(
-      Paths.get(sourcePart.toString(), namespacePart.toString, "solution", "Index.scala")
+    val resultPath = Root.resolve(
+      Paths.get(SourcePart.toString(), NamespacePart.toString, "solution", "Index.scala")
     )
     writeToUtf8File(resultPath, contents)
 
@@ -115,12 +115,8 @@ object FileManager:
     println(s"Writing $fileName")
     Files.writeString(fileName, contents, UTF_8)
 
-  def readUtf8File(fileName: Path): String =
-    Files.readString(fileName, UTF_8)
+  def readUtf8File(fileName: Path): String = Files.readString(fileName, UTF_8)
 
-  def readSessionKey(): Option[String] =
-    Try(readUtf8File(Paths.get(SESSION_KEY_FILENAME))) match
-      case Failure(_)     => None
-      case Success(value) => Some(value)
+  def readSessionKey(): Option[String] = Try(readUtf8File(Paths.get(SessionKeyFilename))).toOption
 
   def getDayStr(day: Int) = if (day < 10) s"0$day" else day.toString

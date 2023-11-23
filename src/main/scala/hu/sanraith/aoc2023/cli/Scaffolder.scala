@@ -7,17 +7,17 @@ class Scaffolder(sessionKey: String):
   def scaffoldDay(day: Int, onlyInputs: Boolean, invalidateCache: Boolean): Unit =
     val client = WebClient(sessionKey)
     val inputPath = client
-      .requestCached(s"${Util.currentYear}/day/$day/input", invalidateCache)
+      .requestCached(s"${Util.CurrentYear}/day/$day/input", invalidateCache)
       .map(FileManager.createInputFile(day, _))
     if (inputPath.isEmpty) println(s"Unable to scaffold inputs for day $day")
 
     if (!onlyInputs)
       client
-        .requestCached(s"${Util.currentYear}/day/$day", invalidateCache)
+        .requestCached(s"${Util.CurrentYear}/day/$day", invalidateCache)
         .map(HtmlParser.parsePuzzlePage)
         .flatten match
         case Some(puzzle) =>
-          val part1TestInput = Util.includesNewLineRegex.matches(puzzle.part1TestInput) match
+          val part1TestInput = Util.IncludesNewLineRegex.matches(puzzle.part1TestInput) match
             case true  => s"\n${puzzle.part1TestInput.trim}"
             case false => puzzle.part1TestInput
           val testPath = FileManager.createTestFile(

@@ -39,7 +39,7 @@ object SolutionRunner:
     val timeStr = s"(${Util.timeStr(duration)})".reverse.padTo(9, ' ').reverse
     val lineStart = s"Part $part $timeStr: "
     val formattedResult = result match
-      case Util.includesNewLineRegex(lines) =>
+      case Util.IncludesNewLineRegex(lines) =>
         lines.split("\n").mkString("\n".padTo(lineStart.length + 1, ' '))
       case line => line
     statusLine.println(s"$lineStart$formattedResult")
