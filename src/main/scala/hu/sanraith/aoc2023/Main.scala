@@ -43,13 +43,9 @@ def scaffold(
     onlyInputs: Boolean = false,
     invalidateCache: Boolean = false
 ): Unit =
-  sessionKey.orElse(FileManager.readSessionKey()) match
+  sessionKey.orElse(AppConfig.instance.sessionCookie) match
     case None =>
-      println(s"Please fill session key in ${FileManager.SessionKeyFilename}")
-      FileManager.writeToUtf8File(
-        Paths.get(FileManager.SessionKeyFilename),
-        "YOUR_SESSION_KEY_HERE"
-      )
+      println(s"Please fill session cookie in ${AppConfig.ConfigFileName}")
 
     case Some(sessionKey) =>
       args.headOption.map(_.toLowerCase) match

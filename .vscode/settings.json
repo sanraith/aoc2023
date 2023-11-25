@@ -15,10 +15,11 @@
         "src/test/resources/**": true,
     },
     "editor.indentSize": 2,
-    // "metals.showInferredType": "true",
+    "metals.showInferredType": "true",
     "cSpell.words": [
+        "devcontainer",
         "sanraith",
-        "Scaffolder",
+        "Scaffolder"
     ],
     "cSpell.files": [
         "*.scala",

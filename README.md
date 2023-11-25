@@ -1,6 +1,6 @@
 # aoc2023
 
-Solutions, tests and framework for Advent of Code 2023 in Scala.
+Solutions, tests and framework for Advent of Code 2023 in Scala 3.
 
 ## Requirements
 

@@ -8,8 +8,6 @@ import scala.util.Failure
 import scala.util.Success
 
 object FileManager:
-  val SessionKeyFilename = "sessionKey.txt"
-
   private val DayFileClassNameRegex = """^(Day\d+).scala$""".r
   private val Root = Paths.get(System.getProperty("user.dir"))
 
@@ -116,7 +114,5 @@ object FileManager:
     Files.writeString(fileName, contents, UTF_8)
 
   def readUtf8File(fileName: Path): String = Files.readString(fileName, UTF_8)
-
-  def readSessionKey(): Option[String] = Try(readUtf8File(Paths.get(SessionKeyFilename))).toOption
 
   def getDayStr(day: Int) = if (day < 10) s"0$day" else day.toString

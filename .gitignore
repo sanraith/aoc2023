@@ -1,7 +1,7 @@
 # Advent of Code
 .cache/
 input/
-sessionKey.txt
+config.json
 
 # bloop and metals
 .bloop

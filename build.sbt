@@ -4,5 +4,6 @@ scalaVersion := "3.3.1"
 
 libraryDependencies ++= Seq(
   "org.jsoup" % "jsoup" % "1.16.2",
+  "com.github.pureconfig" % "pureconfig_2.13" % "0.17.4",
   "org.scalatest" %% "scalatest-funspec" % "3.2.17" % "test"
 )

@@ -27,7 +27,13 @@ class Scaffolder(sessionKey: String):
           )
           val solutionPath = FileManager.createSolutionFile(day, title = puzzle.title)
 
-          println("Opening puzzle files in VS Code...")
-          Try(s"code $inputPath $testPath $solutionPath".!)
+          val prefs = AppConfig.instance
+          (prefs.openScaffoldedFiles, prefs.pathToEditor) match
+            case (true, Some(pathToEditor)) =>
+              println("Opening puzzle files in editor...")
+              val fileList =
+                Seq(inputPath, Some(testPath), Some(solutionPath)).flatten.mkString(" ")
+              Try(s"$pathToEditor $fileList".!)
+            case _ => ()
 
         case _ => println(s"Unable to scaffold puzzle data for day $day")
