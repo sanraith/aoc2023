@@ -34,7 +34,11 @@ object SolutionRunner:
       x <- resultFuture
       _ <- progressFuture
     yield x
-    val (result, duration) = Await.result(combinedFuture, Duration.Inf)
+    val (result, duration) = Await.result(combinedFuture, Duration.Inf) match
+      case (Success(result), duration) =>
+        copyToClipboardIfNeeded(result)
+        (result, duration)
+      case (Failure(error), duration) => (error.toString, duration)
 
     val timeStr = s"(${Util.timeStr(duration)})".reverse.padTo(9, ' ').reverse
     val lineStart = s"Part $part $timeStr: "
@@ -49,14 +53,13 @@ object SolutionRunner:
       part: Int,
       solution: Solution,
       context: ConsoleContext
-  ): Future[(String, FiniteDuration)] = Future:
+  ): Future[(Try[String], FiniteDuration)] = Future:
     val start = System.nanoTime()
-    val result =
-      try
-        part match
-          case 1 => solution.part1(context)
-          case _ => solution.part2(context)
-      catch e => e.toString
+    val result = Try:
+      part match
+        case 1 => solution.part1(context)
+        case _ => solution.part2(context)
+
     context.isCompleted = true
     val duration = Duration.fromNanos(System.nanoTime() - start)
     (result, duration)
@@ -74,6 +77,13 @@ object SolutionRunner:
       statusLine.print(s"Part $part... ($time)$percentage")
       Thread.sleep(75)
     context.printDebugMessages(statusLine)
+
+  private def copyToClipboardIfNeeded(text: String): Unit =
+    if (AppConfig.instance.copyResultToClipboard)
+      Try:
+        val clipboard = java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
+        val content = new java.awt.datatransfer.StringSelection(text)
+        clipboard.setContents(content, content);
 
 /** Prints content to the same console line until println is called. */
 class LineRewriter:

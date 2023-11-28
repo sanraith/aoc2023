@@ -10,7 +10,7 @@ import scala.util.matching.Regex
 object Util:
   val IncludesNewLineRegex: Regex = """^([\s\S]*\n[\s\S]*)$""".r
   val ClassDayRegex: Regex = """^.*?(\d+)$""".r
-  val CurrentYear: Int = 2023
+  val CurrentYear: Int = AppConfig.instance.eventYear
 
   private val DurationScales: Seq[(Long, String, Int)] = Seq(
     (60_000_000_000L, "min", 2),

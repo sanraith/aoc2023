@@ -10,10 +10,12 @@ import scala.concurrent.duration.FiniteDuration
 
 @main
 def main(args: String*) =
-  // clearConsole
   println("━━━━━━━━━━━━━━━━━━━")
   println("Advent of Code 2023")
   println("━━━━━━━━━━━━━━━━━━━")
+
+  // Make sure that a config file is available
+  AppConfig.instance
 
   val dayRegex = """(\d+)""".r
   val firstArg = args.headOption.map(_.toLowerCase)

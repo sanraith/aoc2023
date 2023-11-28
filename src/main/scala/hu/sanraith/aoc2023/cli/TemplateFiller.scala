@@ -8,18 +8,20 @@ class TemplateFiller(template: String):
   def fill(placeholder: String, content: String): TemplateFiller =
     TemplateFiller(template.replaceAll(placeholder, content))
 
-  /** Replaces the placeholder with the given lines, keeping the placeholders
-    * original indentation level for each line.
+  /** Replaces the placeholder with the given lines, keeping the placeholders original indentation
+    * level for each line.
     */
-  def fill(placeholder: String, lines: Iterable[String]): TemplateFiller =
+  def fill(
+      placeholder: String,
+      lines: Iterable[String],
+      lineSeparator: String = "\n"
+  ): TemplateFiller =
     val withIndentRegex = Regex("""(?m)^(\s*)""" + Regex.quote(placeholder))
-
-    withIndentRegex.findFirstMatchIn(template) match {
+    withIndentRegex.findFirstMatchIn(template) match
       case Some(m) =>
         val indent = m.group(1)
-        val linesStr = indent + lines.mkString(s",\n$indent")
+        val linesStr = indent + lines.mkString(s"$lineSeparator$indent")
         TemplateFiller(withIndentRegex.replaceFirstIn(template, linesStr))
       case None => this
-    }
 
   override def toString(): String = template

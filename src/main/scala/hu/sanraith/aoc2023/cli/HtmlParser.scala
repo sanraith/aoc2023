@@ -16,10 +16,10 @@ object HtmlParser:
       """.*: (.*) ---""".r.findFirstMatchIn(document.select("h2").first().text()).map(_.group(1))
 
     // Take the first block that has an 'example' sentence before it, or the first one without if none found
-    val example_input_candidates = document
+    val exampleInputCandidates = document
       .select("article:first-of-type pre code")
       .asScala
-      .map(elem =>
+      .flatMap(elem =>
         elem
           .parent()
           .previousElementSiblings()
@@ -29,37 +29,28 @@ object HtmlParser:
           .map(_.text)
           .map(x => (x.toLowerCase.contains("example"), elem.textNodes().asScala.mkString("")))
       )
-      .flatten
       .toList
 
-    val test_input =
-      example_input_candidates
-        .filter { case (hasExample, _) => hasExample }
-        .headOption
-        .map { case (_, text) => text }
-        .orElse(
-          example_input_candidates
-            .lift(0)
-            .map { case (_, text) => text }
-        )
-        .getOrElse("")
+    val testInput = exampleInputCandidates
+      .collect { case (true, text) => text }
+      .headOption
+      .orElse(exampleInputCandidates.headOption.map { case (_, text) => text })
+      .getOrElse("")
 
     // Take the last block that does not end with a question
-    val ends_with_question_regex = """^.*\?\s*$""".r
-    val test_expected = document
+    val endsWithQuestionRegex = """^.*\?\s*$""".r
+    val testExpected = document
       .select("article:first-of-type em")
       .asScala
       .map(_.text.trim)
-      .filter(ends_with_question_regex.findFirstMatchIn(_).isEmpty)
+      .filter(endsWithQuestionRegex.findFirstMatchIn(_).isEmpty)
       .lastOption
       .getOrElse("")
 
     titleOption.map(title =>
       PuzzlePageContents(
         title = title,
-        part1TestInput = test_input,
-        part1TestExpected = test_expected
+        part1TestInput = testInput,
+        part1TestExpected = testExpected
       )
     )
-
-  end parsePuzzlePage

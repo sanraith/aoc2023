@@ -10,7 +10,8 @@ case class AppConfig(
     sessionCookie: Option[String],
     pathToEditor: Option[String],
     openScaffoldedFiles: Boolean,
-    copyResultToClipboard: Boolean
+    copyResultToClipboard: Boolean,
+    eventYear: Int
 )
 
 object AppConfig:
@@ -22,53 +23,40 @@ object AppConfig:
       sessionCookie = None,
       pathToEditor = None,
       openScaffoldedFiles = false,
-      copyResultToClipboard = false
+      copyResultToClipboard = false,
+      eventYear = 2023
     )
 
-  def saveToFile(preferences: AppConfig, filePath: String): Unit = {
+  def saveToFile(preferences: AppConfig, filePath: String): Unit =
     val config = ConfigWriter[AppConfig].to(preferences)
     Files.write(
       Paths.get(filePath),
       config.render(ConfigRenderOptions.defaults().setOriginComments(false)).getBytes
     )
-  }
 
-  def loadFromFile(filePath: String): AppConfig = {
-    if (Files.exists(Paths.get(filePath))) {
-      val content = Using.resource(scala.io.Source.fromFile(filePath)) { source =>
-        source.mkString
-      }
-
+  def loadFromFile(filePath: String): AppConfig =
+    if (Files.exists(Paths.get(filePath)))
+      val content = Using.resource(scala.io.Source.fromFile(filePath))(source => source.mkString)
       val rawConfig = ConfigFactory.parseString(content)
       ConfigSource.fromConfig(rawConfig).load[AppConfig].getOrElse(defaultConfig)
-    } else {
+    else
       saveToFile(defaultConfig, filePath)
       defaultConfig
-    }
-  }
 
-  implicit val configReader: ConfigReader[AppConfig] =
-    ConfigReader.forProduct4(
-      "sessionCookie",
-      "pathToEditor",
-      "openScaffoldedFiles",
-      "copyResultToClipboard"
-    )((a: String, b: String, c: Boolean, d: Boolean) => {
-      val toOpt = (x: String) => Option(x).filter(_.trim.nonEmpty)
-      AppConfig(toOpt(a), toOpt(b), c, d)
-    })
+  implicit val configReader: ConfigReader[AppConfig] = ConfigReader.forProduct5(
+    "sessionCookie",
+    "pathToEditor",
+    "openScaffoldedFiles",
+    "copyResultToClipboard",
+    "eventYear"
+  )(AppConfig.apply)
 
-  implicit val configWriter: ConfigWriter[AppConfig] =
-    ConfigWriter.forProduct4(
-      "sessionCookie",
-      "pathToEditor",
-      "openScaffoldedFiles",
-      "copyResultToClipboard"
-    )(x =>
-      (
-        x.sessionCookie.getOrElse(""),
-        x.pathToEditor.getOrElse(""),
-        x.openScaffoldedFiles,
-        x.copyResultToClipboard
-      )
-    )
+  implicit val configWriter: ConfigWriter[AppConfig] = ConfigWriter.forProduct5(
+    "sessionCookie",
+    "pathToEditor",
+    "openScaffoldedFiles",
+    "copyResultToClipboard",
+    "eventYear"
+  )(c =>
+    (c.sessionCookie, c.pathToEditor, c.openScaffoldedFiles, c.copyResultToClipboard, c.eventYear)
+  )

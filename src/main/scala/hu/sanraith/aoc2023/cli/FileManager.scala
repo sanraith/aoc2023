@@ -40,7 +40,9 @@ object FileManager:
       )
     val template = readUtf8File(templatePath)
     val contents = TemplateFiller(template)
+      .fill("__DAY__", day.toString)
       .fill("__DAY_STR__", dayStr)
+      .fill("__YEAR__", Util.CurrentYear.toString)
       .fill("__TITLE__", title)
       .toString
     val solutionPath =
@@ -61,12 +63,14 @@ object FileManager:
       Root.resolve(
         Paths.get(
           TemplateRoot.toString,
-          "DAY__DAY_STR__Test.scala"
+          "Day__DAY_STR__Test.scala"
         )
       )
     val template = readUtf8File(templatePath)
     val contents = TemplateFiller(template)
+      .fill("__DAY__", day.toString)
       .fill("__DAY_STR__", dayStr)
+      .fill("__YEAR__", Util.CurrentYear.toString)
       .fill("__PART_1_TEST_INPUT__", part1TestInput)
       .fill("__PART_1_TEST_EXPECTED__", part1TestExpected)
       .fill("__PART_2_TEST_INPUT__", part2TestInput)
@@ -101,7 +105,7 @@ object FileManager:
 
     // Fill template with class list and save it
     val contents = TemplateFiller(template)
-      .fill("__SOLUTION_CLASS_LIST__", classNameList.map(x => s"classOf[$x]"))
+      .fill("__SOLUTION_CLASS_LIST__", classNameList.map(x => s"classOf[$x]"), ",\n")
       .toString
     val resultPath = Root.resolve(
       Paths.get(SourcePart.toString(), NamespacePart.toString, "solution", "Index.scala")
