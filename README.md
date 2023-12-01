@@ -23,7 +23,8 @@ Use `sbt <command>`, or start `sbt` and enter one of the commands:
 
 - Run solutions:  
 `run [ all | last | <days...> ]`
-  
+- Test solutions:  
+`test` | `test-<day>`
 - Scaffold solutions:  
  Create solution, test and input files by getting info from [adventofcode.com](https://adventofcode.com).  
 `run scaffold [reload] [ <days...> | input [<days...>] | inputs ]`
@@ -39,6 +40,7 @@ Use `sbt <command>`, or start `sbt` and enter one of the commands:
 - `run scaffold input 1 2` - Download inputs for the given days.
 - `run scaffold reload input 1 2` - Re-download the input for the given days, invalidating the cache.
 - `test` - Run all tests.
+- `test-12` - Run tests for day 12.
 
 ## Configuration options
 
