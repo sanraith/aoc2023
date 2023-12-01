@@ -36,12 +36,8 @@ zoneight234
   describe("Day01 for custom input") {
     given day: Solution = Day01()
 
-    it("part 2 works with overlapping text at the end of the line"):
-      assertPart(
-        day.part2,
-        expected = "12",
-        input = """1eightwo""""
-      )
+    it("works with overlapping text at the end of the line for part 2"):
+      assertPart(day.part2, expected = "12", input = "1eightwo")
   }
 
   describe("Day01 for puzzle input") {
