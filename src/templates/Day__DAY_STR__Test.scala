@@ -4,7 +4,7 @@ import hu.sanraith.aoc2023.SolutionTestSpec
 /** Tests for https://adventofcode.com/__YEAR__/day/__DAY__ */
 class Day__DAY_STR__Test extends SolutionTestSpec:
 
-  describe("Day__DAY_STR__ for test input") {
+  describe("Day__DAY_STR__ for example input") {
     given day: Solution = Day__DAY_STR__()
 
     it("solves part 1"):
