@@ -46,11 +46,16 @@ The app generates `config.json` on first run:
 
 ```jsonc
 {
-    "copyResultToClipboard": false, // Copy the last successful result to the clipboard
-    "eventYear" : 2023, // The event year to use for puzzle info from adventofcode.com
-    "openScaffoldedFiles": false, // Open the scaffolded files using the editor defined in "pathToEditor"
-    "pathToEditor": "C:\\Program Files\\Microsoft VS Code\\Code.exe", // The editor "openScaffoldedFiles" uses
-    "sessionCookie": "YOUR_SESSION_COOKIE" // Your Advent of Code session key used to get your puzzle input
+    // Copy the last successful result to the clipboard
+    "copyResultToClipboard": false,
+    // The event year to use for puzzle info from adventofcode.com
+    "eventYear" : 2023,
+    // Open the scaffolded files using the editor defined in "pathToEditor"
+    "openScaffoldedFiles": false,
+    // The editor "openScaffoldedFiles" uses
+    "pathToEditor": "C:\\Program Files\\Microsoft VS Code\\Code.exe",
+    // Your Advent of Code session key used to get your puzzle input
+    "sessionCookie": "YOUR_SESSION_COOKIE"
 }
 ```
 
