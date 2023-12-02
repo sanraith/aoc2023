@@ -17,7 +17,7 @@ class Day02 extends Solution:
       .map: game =>
         game.hands
           .fold(Map.empty)((acc, hand) =>
-            acc ++ hand.map((color, count) => (color, acc.getOrElse(color, 0).max(count)))
+            acc ++ hand.map((color, count) => color -> acc.getOrElse(color, 0).max(count))
           )
           .map((_, count) => count)
           .product
@@ -30,7 +30,7 @@ class Day02 extends Solution:
       .map: (line, i) =>
         val hands = line
           .split(";")
-          .map(handRegex.findAllMatchIn(_).map(m => (m.group(2), m.group(1).toInt)).toMap)
+          .map(handRegex.findAllMatchIn(_).map(m => m.group(2) -> m.group(1).toInt).toMap)
         Game(i + 1, hands)
 
 case class Game(id: Int, hands: Seq[Map[String, Int]])
