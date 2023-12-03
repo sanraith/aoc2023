@@ -18,6 +18,7 @@ abstract class SolutionTestSpec extends AnyFunSpec {
       expected: String,
       input: String = null
   )(implicit solution: Solution) =
+    solution.println = println _
     val resolvedInput = trim(Option(input).getOrElse(Util.loadInputFromFile(solution)))
     val actual = part(TestContext(resolvedInput))
     assertResult(trim(expected))(actual)
