@@ -16,20 +16,21 @@ class Day03 extends Solution:
 
   def parseParts(input: String) =
     val numberRegex = """\d+""".r
-    val numbers = input.linesIterator.zipWithIndex
-      .flatMap: (line, i) =>
-        numberRegex.findAllMatchIn(line).map(m => ((m.start until m.end), i, m.matched.toInt))
-      .toSeq // (rangeX, y, number)
+    val numbersPerLine: Seq[List[(Range, Int)]] = input.linesIterator
+      .map(numberRegex.findAllMatchIn(_).map(m => ((m.start until m.end), m.matched.toInt)).toList)
+      .toSeq
 
     val symbolRegex = """[^\.\d\n]""".r
     input.linesIterator.zipWithIndex
-      .flatMap((line, i) => symbolRegex.findAllMatchIn(line).map(m => (m.start, i, m.matched)))
+      .flatMap((line, y) => symbolRegex.findAllMatchIn(line).map(m => (m.start, y, m.matched)))
       .map: (x, y, symbol) =>
         val symRangeX = (x - 1) to (x + 1)
         val symRangeY = (y - 1) to (y + 1)
-        val partNumbers = numbers
-          .filter((numRX, numY, _) => symRangeX.intersects(numRX) && symRangeY.contains(numY))
-          .map((_, _, num) => num)
+        val partNumbers = numbersPerLine
+          .slice(symRangeY.start, symRangeY.end + 1)
+          .flatten
+          .filter((numRangeX, _) => symRangeX.intersects(numRangeX))
+          .map((_, num) => num)
         Part(symbol, partNumbers)
 
   case class Part(symbol: String, numbers: Seq[Int])
