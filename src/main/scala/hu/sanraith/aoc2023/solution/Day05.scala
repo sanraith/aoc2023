@@ -34,44 +34,28 @@ class Day05 extends Solution:
       .head
       .toString
 
-  /** Combine ranges on 2 levels by
-    *   - creating distinct ranges of a.dest & b.src
-    *   - combining their delta where they overlap
+  /** Combine ranges on level 1 & 2 by
+    *   - creating distinct ranges of a.destination & b.source
+    *   - adding their delta where they overlap
     *   - normalizing them to level 1
-    * TODO refactor I guess
     */
-  def combineRanges(rda: Seq[RangeDelta], rdb: Seq[RangeDelta]) =
-    val rdai = rda.zipWithIndex
-    val rdbi = rdb.zipWithIndex
-    (rda.flatMap(rd => List(rd.source.start + rd.delta, rd.source.end + rd.delta)) ++ rdb.flatMap(
-      rd => List(rd.source.start, rd.source.end)
-    )).toSet.toSeq.sorted
+  def combineRanges(rangesA: Seq[RangeDelta], rangesB: Seq[RangeDelta]) =
+    val aPoints = rangesA.flatMap(r => List(r.source.start + r.delta, r.source.end + r.delta))
+    val bPoints = rangesB.flatMap(r => List(r.source.start, r.source.end))
+    (aPoints ++ bPoints).toSet.toSeq.sorted
       .sliding(2)
       .toList
-      .map { case Seq(x1, x2) =>
-        (
-          x1,
-          x2,
-          rdai.map((rd, i) => x1 >= rd.source.start + rd.delta && x2 <= rd.source.end + rd.delta),
-          rdbi.map((rd, i) => x1 >= rd.source.start && x2 <= rd.source.end)
-        )
+      .flatMap { case Seq(from, to) =>
+        val deltaA = rangesA
+          .find(r => from >= r.source.start + r.delta && to <= r.source.end + r.delta)
+          .map(_.delta)
+        val deltaB = rangesB.find(r => from >= r.source.start && to <= r.source.end).map(_.delta)
+        (deltaA, deltaB) match
+          case (None, None)         => None
+          case (Some(dA), None)     => Some(RangeDelta(from - dA until to - dA, dA))
+          case (None, Some(dB))     => Some(RangeDelta(from until to, dB))
+          case (Some(dA), Some(dB)) => Some(RangeDelta(from - dA until to - dA, dA + dB))
       }
-      .groupBy { (x1, x2, ma, mb) => ma.count(x => x) + mb.count(x => x) }
-      .toList
-      .flatMap((k, s) =>
-        k match
-          case 0 => Seq.empty
-          case _ =>
-            s.map { case (start, end, ma, mb) =>
-              val deltaA = ma.zipWithIndex.find((x, _) => x).map((_, i) => rdai(i)._1.delta)
-              val deltaB = mb.zipWithIndex.find((x, _) => x).map((_, i) => rdbi(i)._1.delta)
-              (deltaA, deltaB) match
-                case (None, None)         => throw new Exception("logic error")
-                case (Some(da), None)     => RangeDelta(start - da until end - da, da)
-                case (None, Some(db))     => RangeDelta(start until end, db)
-                case (Some(da), Some(db)) => RangeDelta(start - da until end - da, da + db)
-            }
-      )
 
   def parseMaps(input: String) =
     val numberRegex = """\d+""".r
