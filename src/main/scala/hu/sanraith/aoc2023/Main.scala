@@ -25,7 +25,7 @@ def main(args: String*) =
       solveDays(SolutionMap.keySet.toSeq.sorted)
     case Some("last") =>
       println("Solving last available day...")
-      solveDays(Seq(SolutionMap.keySet.toSeq.sorted.last))
+      solveDays(Seq(SolutionMap.keySet.toSeq.max))
     case Some("scaffold")    => scaffold(args.drop(1))
     case Some("day")         => solveDays(getDays(args.drop(1)))
     case Some(dayRegex(day)) => solveDays(getDays(args))
@@ -70,7 +70,7 @@ def scaffold(
           val resolvedDays = days.length match
             case 0 =>
               Seq(
-                SolutionMap.keySet.toSeq.sorted.lastOption
+                SolutionMap.keySet.toSeq.maxOption
                   .map(day => Math.min(day + 1, 25))
                   .getOrElse(1)
               )

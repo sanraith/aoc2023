@@ -15,17 +15,17 @@ class Day06 extends Solution:
     val (_, (time, record)) = parseMatches(ctx.input)
     var count = 0
     for (speed <- (1 until time.toInt))
+      if (speed % 1_000_000 == 0)
+        ctx.progress(speed / time.toDouble)
       if (((time - speed) * speed) > record)
         count += 1
 
     count.toString
 
   def parseMatches(input: String) =
-    val inputRegex = """(?s)Time:(?<time>.*)\s*Distance:(?<distance>.*)""".r
     val numberRegex = """(\d+)""".r
-    input match
-      case inputRegex(timesStr, distancesStr) =>
-        val times = numberRegex.findAllIn(timesStr).map(_.toInt).toSeq
-        val distances = numberRegex.findAllIn(distancesStr).map(_.toInt).toSeq
+    val numbersPerLine = input.linesIterator.map(numberRegex.findAllIn(_).map(_.toInt).toSeq).toSeq
+    numbersPerLine match
+      case Seq(times, distances) =>
         (times.zip(distances), (times.mkString.toLong, distances.mkString.toLong))
       case _ => throw new Exception("invalid input")

@@ -21,7 +21,7 @@ Install SBT and run `sbt` in the repository root directory.
 
 ## Commands
 
-Use `sbt <command>`, or start `sbt` and enter one of the commands:
+Use `sbt "<command>"`, or start `sbt` and enter one of the commands:
 
 - Run solutions:  
 `run [ all | last | <days...> ]`
