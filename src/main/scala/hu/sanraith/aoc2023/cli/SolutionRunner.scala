@@ -62,7 +62,7 @@ object SolutionRunner:
 
     context.isCompleted = true
     val duration = Duration.fromNanos(System.nanoTime() - start)
-    (result, duration)
+    (result.map(_.toString), duration)
 
   private def showProgressAsync(
       part: Int,

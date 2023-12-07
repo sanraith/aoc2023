@@ -4,15 +4,14 @@ package hu.sanraith.aoc2023.solution
 class Day02 extends Solution:
   override val title: String = "Cube Conundrum"
 
-  override def part1(ctx: Context): String =
+  override def part1(ctx: Context): Int =
     val bag = Map("red" -> 12, "green" -> 13, "blue" -> 14)
     parseGames(ctx.input)
       .filter(_.hands.forall(_.forall((color, count) => count <= bag(color))))
       .map(_.id)
       .sum
-      .toString
 
-  override def part2(ctx: Context): String =
+  override def part2(ctx: Context): Int =
     parseGames(ctx.input)
       .map: game =>
         game.hands
@@ -22,7 +21,6 @@ class Day02 extends Solution:
           .map((_, count) => count)
           .product
       .sum
-      .toString
 
   def parseGames(input: String) =
     val handRegex = """(\d+) (\w+)""".r

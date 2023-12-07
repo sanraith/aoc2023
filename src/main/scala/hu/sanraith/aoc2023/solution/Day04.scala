@@ -6,17 +6,14 @@ import scala.collection.mutable
 class Day04 extends Solution:
   override val title: String = "Scratchcards"
 
-  override def part1(ctx: Context): String =
-    parseCards(ctx.input)
-      .map(card => Math.pow(2, card.matchCount - 1).toInt)
-      .sum
-      .toString
+  override def part1(ctx: Context): Long =
+    parseCards(ctx.input).map(card => Math.pow(2, card.matchCount - 1).toInt).sum
 
-  override def part2(ctx: Context): String =
+  override def part2(ctx: Context): Long =
     given countCache: mutable.Map[Int, Long] = mutable.Map() // id -> count
     val cards = parseCards(ctx.input)
     val cardMap = cards.map(c => c.id -> c).toMap
-    cards.map(c => scratchAndCount(c.id, cardMap)).sum.toString
+    cards.map(c => scratchAndCount(c.id, cardMap)).sum
 
   def scratchAndCount(id: Int, cardMap: Map[Int, Card])(using cache: mutable.Map[Int, Long]): Long =
     cache.getOrElseUpdate(

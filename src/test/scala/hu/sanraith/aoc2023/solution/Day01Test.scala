@@ -10,7 +10,7 @@ class Day01Test extends SolutionTestSpec:
     it("solves part 1"):
       assertPart(
         day.part1,
-        expected = "142",
+        expected = 142,
         input = """
 1abc2
 pqr3stu8vwx
@@ -21,7 +21,7 @@ treb7uchet"""
     it("solves part 2"):
       assertPart(
         day.part2,
-        expected = "281",
+        expected = 281,
         input = """
 two1nine
 eightwothree
@@ -37,12 +37,12 @@ zoneight234
     given day: Solution = Day01()
 
     it("works with overlapping text at the end of the line for part 2"):
-      assertPart(day.part2, expected = "12", input = "1eightwo")
+      assertPart(day.part2, expected = 12, input = "1eightwo")
   }
 
   describe("Day01 for puzzle input") {
     given day: Solution = Day01()
 
-    it("solves part 1")(assertPart(day.part1, "54667"))
-    it("solves part 2")(assertPart(day.part2, "54203"))
+    it("solves part 1")(assertPart(day.part1, 54667))
+    it("solves part 2")(assertPart(day.part2, 54203))
   }

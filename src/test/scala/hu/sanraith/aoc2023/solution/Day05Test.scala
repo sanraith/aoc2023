@@ -8,17 +8,17 @@ class Day05Test extends SolutionTestSpec:
     given day: Solution = Day05()
 
     it("solves part 1"):
-      assertPart(day.part1, expected = "35", input = example)
+      assertPart(day.part1, expected = 35, input = example)
 
     it("solves part 2"):
-      assertPart(day.part2, expected = "46", input = example)
+      assertPart(day.part2, expected = 46, input = example)
   }
 
   describe("Day05 for puzzle input") {
     given day: Solution = Day05()
 
-    it("solves part 1")(assertPart(day.part1, "993500720"))
-    it("solves part 2")(assertPart(day.part2, "4917124"))
+    it("solves part 1")(assertPart(day.part1, 993500720))
+    it("solves part 2")(assertPart(day.part2, 4917124))
   }
 
   val example = """

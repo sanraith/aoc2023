@@ -6,7 +6,7 @@ import scala.collection.immutable.NumericRange.{Exclusive => RangeEx}
 class Day05 extends Solution:
   override val title: String = "If You Give A Seed A Fertilizer"
 
-  override def part1(ctx: Context): String =
+  override def part1(ctx: Context): Long =
     val (seeds, levels) = parseMaps(ctx.input)
     seeds
       .map: seed =>
@@ -16,9 +16,8 @@ class Day05 extends Solution:
             .map(range => index + range.delta)
             .getOrElse(index)
       .min
-      .toString
 
-  override def part2(ctx: Context): String =
+  override def part2(ctx: Context): Long =
     val (seeds, levels) = parseMaps(ctx.input)
     val seedRanges = seeds
       .grouped(2)
@@ -29,7 +28,6 @@ class Day05 extends Solution:
       .filter(r => seedRanges.exists(_.source.intersects(r.source)))
       .map(_.dest.start)
       .min
-      .toString
 
   /** Combine range maps on two levels
     *   - creating distinct ranges of a.dest & b.source

@@ -8,27 +8,20 @@ class Day06Test extends SolutionTestSpec:
     given day: Solution = Day06()
 
     it("solves part 1"):
-      assertPart(
-        day.part1,
-        expected = "288",
-        input = """
-Time:      7  15   30
-Distance:  9  40  200"""
-      )
+      assertPart(day.part1, expected = 288, input = example)
 
     it("solves part 2"):
-      assertPart(
-        day.part2,
-        expected = "71503",
-        input = """
-Time:      7  15   30
-Distance:  9  40  200"""
-      )
+      assertPart(day.part2, expected = 71503, input = example)
+
   }
 
   describe("Day06 for puzzle input") {
     given day: Solution = Day06()
 
-    it("solves part 1")(assertPart(day.part1, "3317888"))
-    it("solves part 2")(assertPart(day.part2, "24655068"))
+    it("solves part 1")(assertPart(day.part1, 3317888))
+    it("solves part 2")(assertPart(day.part2, 24655068))
   }
+
+  val example = """
+Time:      7  15   30
+Distance:  9  40  200"""

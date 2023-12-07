@@ -14,14 +14,14 @@ abstract class SolutionTestSpec extends AnyFunSpec {
     * from `input/Day<day>.txt` if no input provided.
     */
   def assertPart(
-      part: (Context) => String,
-      expected: String,
+      part: (Context) => NumberOrString,
+      expected: NumberOrString,
       input: String = null
   )(implicit solution: Solution) =
     solution.println = println _
     val resolvedInput = trim(Option(input).getOrElse(Util.loadInputFromFile(solution)))
     val actual = part(TestContext(resolvedInput))
-    assertResult(trim(expected))(actual)
+    assertResult(trim(expected.toString))(actual.toString)
 
   /** PENDING assert, remove "_" to make test active. */
   def _assertPart(

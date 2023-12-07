@@ -4,10 +4,12 @@ trait Context:
   val input: String
   def progress(value: Double): Unit = {}
 
+type NumberOrString = Int | Long | String
+
 abstract class Solution:
   val title: String
-  def part1(ctx: Context): String
-  def part2(ctx: Context): String
+  def part1(ctx: Context): NumberOrString
+  def part2(ctx: Context): NumberOrString
   var println: Any => Unit = msg => Predef.println(msg)
 
 sealed class SolutionInfo(

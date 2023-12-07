@@ -4,14 +4,13 @@ package hu.sanraith.aoc2023.solution
 class Day06 extends Solution:
   override val title: String = "Wait For It"
 
-  override def part1(ctx: Context): String =
+  override def part1(ctx: Context): Int =
     val (matches, _) = parseMatches(ctx.input)
     matches
       .map((time, record) => (1 until time).count(speed => ((time - speed) * speed) > record))
       .product
-      .toString
 
-  override def part2(ctx: Context): String =
+  override def part2(ctx: Context): Int =
     val (_, (time, record)) = parseMatches(ctx.input)
     var count = 0
     for (speed <- (1 until time.toInt))
@@ -19,8 +18,7 @@ class Day06 extends Solution:
         ctx.progress(speed / time.toDouble)
       if (((time - speed) * speed) > record)
         count += 1
-
-    count.toString
+    count
 
   def parseMatches(input: String) =
     val numberRegex = """(\d+)""".r

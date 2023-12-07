@@ -4,15 +4,14 @@ package hu.sanraith.aoc2023.solution
 class Day03 extends Solution:
   override val title: String = "Gear Ratios"
 
-  override def part1(ctx: Context): String =
-    parseParts(ctx.input).flatMap(_.numbers).sum.toString
+  override def part1(ctx: Context): Int =
+    parseParts(ctx.input).flatMap(_.numbers).sum
 
-  override def part2(ctx: Context): String =
+  override def part2(ctx: Context): Int =
     parseParts(ctx.input)
       .filter(p => p.symbol == "*" && p.numbers.length == 2)
       .map(_.numbers.product)
       .sum
-      .toString
 
   def parseParts(input: String) =
     val numberRegex = """\d+""".r
