@@ -25,8 +25,8 @@ abstract class SolutionTestSpec extends AnyFunSpec {
 
   /** PENDING assert, remove "_" to make test active. */
   def _assertPart(
-      part: (Context) => String,
-      expected: String,
+      part: (Context) => NumberOrString,
+      expected: NumberOrString,
       input: String = null
   ) = pending
 
