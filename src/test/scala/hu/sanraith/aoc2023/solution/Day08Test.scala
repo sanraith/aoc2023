@@ -39,7 +39,8 @@ ZZZ = (ZZZ, ZZZ)"""
       assertPart(
         day.part2,
         expected = 6,
-        input = """LR
+        input = """
+LR
 
 11A = (11B, XXX)
 11B = (XXX, 11Z)
