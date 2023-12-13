@@ -7,16 +7,16 @@ class Day13 extends Solution:
   override def part1(ctx: Context): Int =
     val maps = parseMaps(ctx.input)
     val horizontalCount = maps.map(countHorizontalMirrored(_)).sum
-    val verticalCount = maps.map(rotateRight).map(countHorizontalMirrored(_)).sum
+    val verticalCount = maps.map(rotateClockwise).map(countHorizontalMirrored(_)).sum
     horizontalCount * 100 + verticalCount
 
   override def part2(ctx: Context): Int =
     val maps = parseMaps(ctx.input)
     val horizontalCount = maps.map(countHorizontalMirrored(_, smudges = 1)).sum
-    val verticalCount = maps.map(rotateRight).map(countHorizontalMirrored(_, smudges = 1)).sum
+    val verticalCount = maps.map(rotateClockwise).map(countHorizontalMirrored(_, smudges = 1)).sum
     horizontalCount * 100 + verticalCount
 
-  def rotateRight(map: MirrorMap) = MirrorMap(
+  def rotateClockwise(map: MirrorMap) = MirrorMap(
     map.content.map((p, c) => Point(map.height - p.y - 1, p.x) -> c),
     width = map.height,
     height = map.width
@@ -39,7 +39,7 @@ class Day13 extends Solution:
       .max
 
   def parseMaps(input: String) =
-    val mapRegex = """(?s)\S.+?(?=(?:\r?\n){2}|\s*$)""".r
+    val mapRegex = """(?s)\S.*?(?=\R{2}|\s*$)""".r
     mapRegex
       .findAllIn(input)
       .map: mapStr =>

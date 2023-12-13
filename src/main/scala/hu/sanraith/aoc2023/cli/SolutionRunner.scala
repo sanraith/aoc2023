@@ -44,7 +44,7 @@ object SolutionRunner:
     val lineStart = s"Part $part $timeStr: "
     val formattedResult = result match
       case Util.IncludesNewLineRegex(lines) =>
-        lines.split("\n").mkString("\n".padTo(lineStart.length + 1, ' '))
+        lines.split("\\R").mkString("\n".padTo(lineStart.length + 1, ' '))
       case line => line
     statusLine.println(s"$lineStart$formattedResult")
     duration

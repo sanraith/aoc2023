@@ -8,7 +8,7 @@ import scala.concurrent.duration.Duration
 import scala.util.matching.Regex
 
 object Util:
-  val IncludesNewLineRegex: Regex = """^([\s\S]*\n[\s\S]*)$""".r
+  val IncludesNewLineRegex: Regex = """^([\s\S]*\R[\s\S]*)$""".r
   val ClassDayRegex: Regex = """^.*?(\d+)$""".r
   val CurrentYear: Int = AppConfig.instance.eventYear
 

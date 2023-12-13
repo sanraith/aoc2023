@@ -7,7 +7,7 @@ import org.scalatest.funspec.AnyFunSpec
 import scala.util.matching.Regex
 
 abstract class SolutionTestSpec extends AnyFunSpec {
-  private val LeadingNewLineRegex: Regex = """(?s)^\s*(?:\n|\r\n)(.*)$""".r
+  private val LeadingNewLineRegex: Regex = """(?s)^\s*\R(.*)$""".r
   private val ClassDayRegex: Regex = """^.*?(\d+)$""".r
 
   /** Asserts that the given part returns the expected output for the given input. Uses puzzle input

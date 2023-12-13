@@ -19,7 +19,7 @@ class Day03 extends Solution:
       .map(numberRegex.findAllMatchIn(_).map(m => ((m.start until m.end), m.matched.toInt)).toList)
       .toSeq
 
-    val symbolRegex = """[^\.\d\n]""".r
+    val symbolRegex = """[^\.\d\r\n]""".r
     input.linesIterator.zipWithIndex
       .flatMap((line, y) => symbolRegex.findAllMatchIn(line).map(m => (m.start, y, m.matched)))
       .map: (x, y, symbol) =>
