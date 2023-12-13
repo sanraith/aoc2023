@@ -46,7 +46,7 @@ def scaffold(
     invalidateCache: Boolean = false
 ): Unit =
   sessionKey.orElse(AppConfig.instance.sessionCookie) match
-    case None =>
+    case None | Some("") =>
       println(s"Please fill session cookie in ${AppConfig.ConfigFileName}")
 
     case Some(sessionKey) =>

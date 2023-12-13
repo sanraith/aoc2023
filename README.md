@@ -12,6 +12,7 @@ Solutions, tests and framework for Advent of Code 2023 in Scala 3.
 - Docker
 
 Open the repository with VS Code in the dev container defined in `.devcontainer/devcontainer.json` and run `sbt` in the repository root directory.
+Might need to run something like `sudo chown -R vscode:vscode /workspaces/aoc2023`, I did not figure out the devcontainers yet.
 
 ### Option B: Scala Build Tool
 

@@ -20,8 +20,8 @@ object AppConfig:
 
   val defaultConfig: AppConfig =
     AppConfig(
-      sessionCookie = None,
-      pathToEditor = None,
+      sessionCookie = Some(""), // TODO fix these so that empty string is read as None
+      pathToEditor = Some(""), // TODO fix these so that empty string is read as None
       openScaffoldedFiles = false,
       copyResultToClipboard = false,
       eventYear = 2023
