@@ -14,12 +14,9 @@ class Day15 extends Solution:
     val stepRegex = """([a-z]+)([-=])(\d*)""".r
     val steps = ctx.input.linesIterator
       .flatMap(_.split(","))
-      .flatMap: stepStr =>
-        stepRegex
-          .findAllMatchIn(stepStr)
-          .map { case stepRegex(label, op, focalLength) =>
-            Step(label, op(0), focalLength.toIntOption.getOrElse(0))
-          }
+      .map { case stepRegex(label, op, focalLength) =>
+        Step(label, op(0), focalLength.toIntOption.getOrElse(0))
+      }
 
     val boxes = (0 until 256).map(_ => mutable.SeqMap[String, Step]())
     for (step <- steps)
