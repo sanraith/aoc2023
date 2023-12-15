@@ -12,10 +12,10 @@ class Day15 extends Solution:
 
   override def part2(ctx: Context): Int =
     val stepRegex = """([a-z]+)([-=])(\d*)""".r
-    val steps = ctx.input.linesIterator
-      .flatMap(_.split(","))
+    val steps = stepRegex
+      .findAllMatchIn(ctx.input)
       .map { case stepRegex(label, op, focalLength) =>
-        Step(label, op(0), focalLength.toIntOption.getOrElse(0))
+        Step(label, op.head, focalLength.toIntOption.getOrElse(0))
       }
 
     val boxes = (0 until 256).map(_ => mutable.SeqMap[String, Step]())
