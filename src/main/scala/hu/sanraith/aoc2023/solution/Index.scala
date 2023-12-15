@@ -17,5 +17,6 @@ val SolutionClasses: List[Class[?]] = List(
   classOf[Day11],
   classOf[Day12],
   classOf[Day13],
-  classOf[Day14]
+  classOf[Day14],
+  classOf[Day15]
 )
