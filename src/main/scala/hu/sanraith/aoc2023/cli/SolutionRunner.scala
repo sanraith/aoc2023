@@ -72,7 +72,8 @@ object SolutionRunner:
     val start = System.nanoTime()
     while (!context.isCompleted)
       val time = Util.timeStr(start, System.nanoTime())
-      val percentage = context.progress.map(x => f" ${x * 100}%2.2f%%").getOrElse("")
+      val percentage =
+        context.progress.map(x => f" ${math.min(x, 1) * 100}%2.2f%%").getOrElse("")
       context.printDebugMessages(statusLine)
       statusLine.print(s"Part $part... ($time)$percentage")
       Thread.sleep(75)

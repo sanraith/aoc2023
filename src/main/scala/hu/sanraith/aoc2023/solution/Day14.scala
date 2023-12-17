@@ -15,6 +15,7 @@ class Day14 extends Solution:
     val target = 1000000000
     var it = 0
     while (it < target)
+      ctx.progress(it.toDouble / 130) // heuristic
       val hash = map.calcHash
       states.get(hash) match
         case Some(load, cycleStart) =>
