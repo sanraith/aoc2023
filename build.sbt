@@ -11,7 +11,8 @@ outputStrategy := Some(StdoutOutput)
 libraryDependencies ++= Seq(
   "org.jsoup" % "jsoup" % "1.16.2",
   "com.github.pureconfig" % "pureconfig_2.13" % "0.17.4",
-  "org.scalatest" %% "scalatest-funspec" % "3.2.17" % "test"
+  "org.scalatest" %% "scalatest-funspec" % "3.2.17" % "test",
+  "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4"
 )
 
 // Test alias for each day: "test-1".."test-25"
