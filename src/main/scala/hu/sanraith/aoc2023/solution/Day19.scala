@@ -11,86 +11,43 @@ class Day19 extends Solution:
     val (workflows, parts) = parseInput(ctx.input)
     val pathRanges = getPathRanges(workflows)
     parts
-      .filter: part =>
-        val pr = pathRanges.find(rs => rs.forall((c, r) => r.contains(part(c))))
-        pr match
-          case Some(pr) =>
-            // println(part)
-            // println(rangesStr(pr))
-            // println("")
-            true
-          case _ => false
+      .filter(part => pathRanges.exists(rs => rs.forall((c, r) => r.contains(part(c)))))
       .map(p => p.values.sum)
       .sum
 
   override def part2(ctx: Context): Long =
     val (workflows, parts) = parseInput(ctx.input)
-    val pathRanges = getPathRanges(workflows)
-    val allRanges = {
+    val rangesByPath = getPathRanges(workflows)
+    val possRanges = {
       val rangeSets = "xmas".map(c => c -> mut.Set.empty[Int]).toMap
-      pathRanges.foreach(cm => cm.foreach((c, r) => rangeSets(c).addAll(Seq(r.start, r.end))))
+      rangesByPath.foreach(cm => cm.foreach((c, r) => rangeSets(c).addAll(Seq(r.start, r.end))))
       rangeSets.map: (c, s) =>
         c -> s.toSeq.sorted.sliding(2).map { case Seq(a, b) => a until b }.toVector
     }
-    // println(allRanges)
-    // println("")
 
-    // val foundCombinations = mut.Map.empty[Int, mut.ArrayBuffer[String]]
-
-    // var sum = 0L
-    // var i = 0
-    // i += 1
-
-    // val sum = (for {
-    //   rx <- allRanges('x').par
-    //   rm <- allRanges('m')
-    //   ra <- allRanges('a')
-    //   rs <- allRanges('s')
-    // } yield {
-    //   val yes = pathRanges.exists(pr =>
-    //     pr('x').containsRange(rx) &&
-    //       pr('m').containsRange(rm) &&
-    //       pr('a').containsRange(ra) &&
-    //       pr('s').containsRange(rs)
-    //   )
-    //   if (yes) 1L * rx.length * rm.length * ra.length * rs.length else 0L
-    // }).sum
-
-    var sum = 0L
-    var i = 0
-    for (rx <- allRanges('x'))
-      ctx.progress(i.toDouble / allRanges('x').length)
-      i += 1
-      val rxRanges = pathRanges.filter(_('x').containsRange(rx))
-      if (rxRanges.length > 0)
-        for (rm <- allRanges('m'))
-          val rmRanges = rxRanges.filter(_('m').containsRange(rm))
-          if (rmRanges.length > 0)
-            for (ra <- allRanges('a'))
-              val raRanges = rmRanges.filter(_('a').containsRange(ra))
-              if (raRanges.length > 0)
-                for (rs <- allRanges('s'))
-                  // val yes = pathRanges.exists: pr =>
-                  //   pr('x').containsRange(rx) &&
-                  //     pr('m').containsRange(rm) &&
-                  //     pr('a').containsRange(ra) &&
-                  //     pr('s').containsRange(rs)
-                  if (raRanges.exists(_('s').containsRange(rs)))
-                    sum += 1L * rx.length * rm.length * ra.length * rs.length
-    sum
-
-  // 206016000000000
-  // 167409079868000
-  // 3209582947500
-  // 1110714862500
-  // 9223372036854775807
+    var rxi = 0
+    val rxCount = possRanges('x').length.toDouble
+    val rangeSizes = possRanges('x').par.map: rx =>
+      ctx.progress(rxi / rxCount)
+      rxi += 1
+      var partialSum = 0L
+      val rxRanges = rangesByPath.filter(_('x').containsRange(rx))
+      for (rm <- possRanges('m'))
+        val rmRanges = rxRanges.filter(_('m').containsRange(rm))
+        for (ra <- possRanges('a'))
+          val raRanges = rmRanges.filter(_('a').containsRange(ra))
+          for (rs <- possRanges('s'))
+            if (raRanges.exists(_('s').containsRange(rs)))
+              partialSum += rx.length.longValue * rm.length * ra.length * rs.length
+      partialSum
+    rangeSizes.sum
 
   def getPathRanges(wfs: Map[String, Workflow]) =
     given workflows: Map[String, Workflow] = wfs
     val startRule = Rule(_ => true, "in", null, 0, 'x')
     val paths = findAcceptedPaths(mut.Stack(Seq(startRule)))
-    paths.toSeq.zipWithIndex
-      .map: (path, i) =>
+    paths.toSeq
+      .map: path =>
         val ranges = mut.Map("xmas".map(c => c -> (1 until 4001)): _*)
         for (rules <- path)
           val appliedRules = rules.take(rules.length - 1).map(_.inverse) :+ rules.last
@@ -101,36 +58,24 @@ class Day19 extends Solution:
               case Some("<") => ranges.addOne((rule.category, r.start until rule.number))
               case Some(_)   => throw new Exception("logic error")
               case None      => ()
-        println(s"#$i ${path.map(_.last.target).mkString("->")}")
-        println(rangesStr(ranges))
-        println("")
         ranges.toMap
       .filter(ranges => ranges.values.forall(r => r.start <= r.end))
       .toVector
-
-  def rangesStr(ranges: Iterable[(Char, Range)]) = ranges.toSeq
-    .sortBy((c, _) => "xmas".indexOf(c))
-    .map((c, r) => s"$c: ${r.start}..${r.end - 1}")
-    .mkString(", ")
-
-  def rangeStr(rx: Range): String = s"${rx.start}..${rx.end - 1}".padTo(11, ' ')
 
   def findAcceptedPaths(
       path: mut.Stack[Seq[Rule]],
       paths: mut.ArrayBuffer[Seq[Seq[Rule]]] = mut.ArrayBuffer.empty
   )(using workflows: Map[String, Workflow]): Iterable[Seq[Seq[Rule]]] =
     val wf = workflows(path.top.last.target)
-    if (wf.isEnd)
-      if (wf.isAccepted) {
-        paths.addOne(path.toSeq.reverse)
-      }
-    else
+    if (!wf.isEnd)
       val currentRules = mut.ArrayBuffer.empty[Rule]
       for (next <- wf.rules)
         currentRules.addOne(next)
         path.push(currentRules.toSeq)
         findAcceptedPaths(path, paths)
         path.pop()
+    else if (wf.isAccepted)
+      paths.addOne(path.toSeq.reverse)
     paths
 
   def parseInput(input: String) =
@@ -155,15 +100,14 @@ class Day19 extends Solution:
               case _   => part => true
             Rule(condition, target, m.group(2), number, category)
           .toSeq
-        (wfName -> Workflow(wfName, rules))
-      .toSeq
-      :+ ("A" -> Workflow("A")) :+ ("R" -> Workflow("R"))).toMap
+        Workflow(wfName, rules)
+      .toSeq :+ Workflow("A") :+ Workflow("R")).map(wf => wf.name -> wf).toMap
 
     val categories = "xmas"
     val parts = partLines.linesIterator
       .map: line =>
-        val m = partRegex.findFirstMatchIn(line).get
-        m.subgroups.zipWithIndex.map((v, i) => categories(i) -> v.toInt).toMap
+        val mtch = partRegex.findFirstMatchIn(line).get
+        mtch.subgroups.zipWithIndex.map((v, i) => categories(i) -> v.toInt).toMap
       .toSeq
 
     (workflows, parts)

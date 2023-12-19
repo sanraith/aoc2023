@@ -17,8 +17,8 @@ class Day19Test extends SolutionTestSpec:
   describe("Day19 for puzzle input") {
     given day: Solution = Day19()
 
-    it("solves part 1")(_assertPart(day.part1, 350678))
-    it("solves part 2")(_assertPart(day.part2, 124831893423809L))
+    it("solves part 1")(assertPart(day.part1, 350678))
+    it("solves part 2")(assertPart(day.part2, 124831893423809L))
   }
 
   val example = """
