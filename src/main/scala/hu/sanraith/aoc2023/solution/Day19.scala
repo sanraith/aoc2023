@@ -21,30 +21,35 @@ class Day19 extends Solution:
     val possRanges = {
       val rangeSets = "xmas".map(c => c -> mut.Set.empty[Int]).toMap
       rangesByPath.foreach(cm => cm.foreach((c, r) => rangeSets(c).addAll(Seq(r.start, r.end))))
-      rangeSets.map: (c, s) =>
-        c -> s.toSeq.sorted.sliding(2).map { case Seq(a, b) => a until b }.toVector
+      rangeSets.map: (c, set) =>
+        c -> set.toSeq.sorted
+          .sliding(2)
+          .map { case Seq(a, b) => a until b }
+          .filter(r => rangesByPath.exists(_(c).containsRange(r)))
+          .toVector
     }
 
     var rxi = 0
     val rxCount = possRanges('x').length.toDouble
     val rangeSizes = possRanges('x').par.map: rx =>
-      ctx.progress(rxi / rxCount)
-      rxi += 1
+      synchronized:
+        ctx.progress(rxi / rxCount)
+        rxi += 1
       var partialSum = 0L
-      val rxRanges = rangesByPath.filter(_('x').containsRange(rx))
+      val xPaths = rangesByPath.filter(_('x').containsRange(rx))
       for (rm <- possRanges('m'))
-        val rmRanges = rxRanges.filter(_('m').containsRange(rm))
+        val mPaths = xPaths.filter(_('m').containsRange(rm))
         for (ra <- possRanges('a'))
-          val raRanges = rmRanges.filter(_('a').containsRange(ra))
+          val aPaths = mPaths.filter(_('a').containsRange(ra))
           for (rs <- possRanges('s'))
-            if (raRanges.exists(_('s').containsRange(rs)))
+            if (aPaths.exists(_('s').containsRange(rs)))
               partialSum += rx.length.longValue * rm.length * ra.length * rs.length
       partialSum
     rangeSizes.sum
 
   def getPathRanges(wfs: Map[String, Workflow]) =
     given workflows: Map[String, Workflow] = wfs
-    val startRule = Rule(_ => true, "in", null, 0, 'x')
+    val startRule = Rule('x', '#', 0, "in")
     val paths = findAcceptedPaths(mut.Stack(Seq(startRule)))
     paths.toSeq
       .map: path =>
@@ -53,11 +58,10 @@ class Day19 extends Solution:
           val appliedRules = rules.take(rules.length - 1).map(_.inverse) :+ rules.last
           for (rule <- appliedRules)
             lazy val r = ranges(rule.category)
-            Option(rule.op) match
-              case Some(">") => ranges.addOne((rule.category, rule.number + 1 until r.end))
-              case Some("<") => ranges.addOne((rule.category, r.start until rule.number))
-              case Some(_)   => throw new Exception("logic error")
-              case None      => ()
+            rule.op match
+              case '>' => ranges.addOne((rule.category, rule.number + 1 until r.end))
+              case '<' => ranges.addOne((rule.category, r.start until rule.number))
+              case _   => ()
         ranges.toMap
       .filter(ranges => ranges.values.forall(r => r.start <= r.end))
       .toVector
@@ -92,13 +96,10 @@ class Day19 extends Solution:
           .findAllMatchIn(wfParts)
           .map: m =>
             val category = m.group(1)(0)
+            val op = Option(m.group(2)).map(_(0)).getOrElse('#')
             val number = Option(m.group(3)).map(_.toInt).getOrElse(0)
             val target = Option(m.group(4)).getOrElse(m.group(1))
-            val condition: Condition = m.group(2) match
-              case ">" => part => part(category) > number
-              case "<" => part => part(category) < number
-              case _   => part => true
-            Rule(condition, target, m.group(2), number, category)
+            Rule(category, op, number, target)
           .toSeq
         Workflow(wfName, rules)
       .toSeq :+ Workflow("A") :+ Workflow("R")).map(wf => wf.name -> wf).toMap
@@ -112,18 +113,15 @@ class Day19 extends Solution:
 
     (workflows, parts)
 
-  case class Rule(condition: Condition, target: String, op: String, number: Int, category: Char):
+  case class Rule(category: Char, op: Char, number: Int, target: String):
     def inverse: Rule = op match
-      case "<" => Rule(null, target, ">", number - 1, category)
-      case ">" => Rule(null, target, "<", number + 1, category)
-      case _   => Rule(null, target, op, number, category)
+      case '<' => Rule(category, '>', number - 1, target)
+      case '>' => Rule(category, '<', number + 1, target)
+      case _   => Rule(category, op, number, target)
 
   case class Workflow(name: String, rules: Seq[Rule] = Seq.empty):
     val isEnd = name == "R" || name == "A"
     val isAccepted = name == "A"
-
-  type Part = Map[Char, Int]
-  type Condition = (part: Part) => Boolean
 
   implicit class RangeOps(r1: Range):
     def containsRange(r2: Range): Boolean =
