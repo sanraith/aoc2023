@@ -1,6 +1,7 @@
 package hu.sanraith.aoc2023.cli
 
 import org.jsoup.Jsoup
+import org.jsoup.parser.Parser
 import scala.jdk.CollectionConverters._
 
 class PuzzlePageContents(
@@ -27,7 +28,12 @@ object HtmlParser:
           .filter(!_.children.isEmpty)
           .headOption
           .map(_.text)
-          .map(x => (x.toLowerCase.contains("example"), elem.textNodes().asScala.mkString("")))
+          .map(x =>
+            (
+              x.toLowerCase.contains("example"),
+              Parser.unescapeEntities(elem.textNodes().asScala.mkString(""), false)
+            )
+          )
       )
       .toList
 
@@ -42,7 +48,7 @@ object HtmlParser:
     val testExpected = document
       .select("article:first-of-type em")
       .asScala
-      .map(_.text.trim)
+      .map(e => Parser.unescapeEntities(e.text.trim, false))
       .filter(endsWithQuestionRegex.findFirstMatchIn(_).isEmpty)
       .lastOption
       .getOrElse("")
