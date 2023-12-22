@@ -1,0 +1,59 @@
+flowchart TD
+cg[%cg] --> mt & hb
+sp[%sp] --> xm
+nr[%nr] --> hf & mt
+broadcaster[broadcaster] --> tl & gd & zb & gc
+qz[&qz] --> qn
+df[%df] --> hd
+vg[%vg] --> rm & kx
+gm[%gm] --> mt & md
+ls[%ls] --> hc
+lq[%lq] --> zq & fx
+zd[&zd] --> bz & kg & zb & lf & sq & zk & jx
+lz[%lz] --> mt
+sq[%sq] --> zk
+zn[%zn] --> kx & tc
+zq[&zq] --> mb & hc & qz & ql & tl & ls
+mt[&mt] --> zm & tt & mh & gd & md
+lm[%lm] --> mb & zq
+hf[%hf] --> mt & sm
+hb[%hb] --> mh & mt
+rm[%rm] --> kx
+gc[%gc] --> kx & sp
+cq[&cq] --> qn
+mh[%mh] --> jt
+zm[%zm] --> nr
+xm[%xm] --> kx & ld
+jx[&jx] --> qn
+qn[&qn] --> rx
+mp[%mp] --> qt & kx
+zk[%zk] --> vj
+hd[%hd] --> mp & kx
+tl[%tl] --> zq & hl
+zb[%zb] --> zd & ph
+cl[%cl] --> zd
+tt[&tt] --> qn
+ld[%ld] --> zn
+js[%js] --> lq & zq
+sm[%sm] --> mt & lz
+qt[%qt] --> vg & kx
+md[%md] --> cg
+vj[%vj] --> bz & zd
+qs[%qs] --> zd & fs
+mb[%mb] --> ps
+kx[&kx] --> cq & gc & sp & df & ld
+hc[%hc] --> lm
+tc[%tc] --> df & kx
+ps[%ps] --> js & zq
+fs[%fs] --> qc & zd
+hl[%hl] --> jj & zq
+bz[%bz] --> qs
+jj[%jj] --> zq & ql
+ql[%ql] --> ls
+ph[%ph] --> kg & zd
+qc[%qc] --> cl & zd
+lf[%lf] --> sq
+kg[%kg] --> lf
+fx[%fx] --> zq
+jt[%jt] --> zm & mt
+gd[%gd] --> gm & mt
