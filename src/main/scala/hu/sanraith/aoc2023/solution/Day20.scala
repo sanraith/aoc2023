@@ -16,44 +16,44 @@ class Day20 extends Solution:
       val (low, high) = countPulses(broadcaster, modules)
       lowCount += low
       highCount += high
-
-    // println(lowCount, highCount)
     lowCount * highCount
 
+  // Solution specialized for the puzzle input where 4 counters are connected to the conjuction before rx.
   override def part2(ctx: Context): Long =
     val modules = parseInput(ctx.input)
     val broadcaster = modules("broadcaster")
-    var hadRxLow = false
-    val reportRxLow = () => { println("report"); hadRxLow = true }
+    val rxInput = modules.values.find(_.targets.contains("rx")).get.asInstanceOf[Conjuction]
+    val inputCycles = mut.Map.from(rxInput.states.keys.map(k => k -> -1L))
 
     var pressCount = 0
-    while (!hadRxLow)
+    while (inputCycles.values.exists(_ == -1))
       pressCount += 1
-      countPulses(broadcaster, modules, reportRxLow)
-    pressCount
+      countPulses(broadcaster, modules)
+      rxInput.highInputs.filter(inputCycles(_) == -1).foreach(inputCycles(_) = pressCount)
+    inputCycles.values.foldLeft(1L)(lcm)
+
+  def lcm(a: Long, b: Long): Long =
+    (a * b) / gcd(a, b)
+
+  def gcd(a: Long, b: Long): Long =
+    if (b == 0) a else gcd(b, a % b)
 
   def countPulses(
       startModule: Module,
-      modules: Map[String, Module],
-      reportRxLow: () => Unit = () => ()
+      modules: Map[String, Module]
   ): (Int, Int) =
     val queue = mut.Queue(("button", false, startModule))
     var (lowCount, highCount) = (0, 0)
     while (queue.length > 0)
       val (from, signal, module) = queue.dequeue()
-      // println(s"$from -${if (signal) "high" else "low"}-> ${module.name}")
       signal match
-        case true => highCount += 1
-        case false =>
-          lowCount += 1
-          if (module.name == "rx") reportRxLow()
-
+        case true  => highCount += 1
+        case false => lowCount += 1
       module.run(from, signal) match
         case Some(nextSignal) =>
           module.targets.foreach: target =>
             queue.enqueue((module.name, nextSignal, modules(target)))
         case None => ()
-
     (lowCount, highCount)
 
   def parseInput(inputs: String) =
@@ -76,12 +76,12 @@ class Day20 extends Solution:
     modules ++ modules.values
       .flatMap(_.targets)
       .filter(!modules.contains(_))
-      .map(n => n -> new NoneModule(n))
+      .map(n => n -> new OutModule(n))
 
   abstract class Module(val name: String, val targets: Seq[String]):
     def run(from: String, signal: Boolean): Option[Boolean]
 
-  class NoneModule(name: String) extends Module(name, Seq.empty):
+  class OutModule(name: String) extends Module(name, Seq.empty):
     override def run(from: String, signal: Boolean) = None
 
   class Broadcaster(name: String, targets: Seq[String]) extends Module(name, targets):
@@ -98,10 +98,13 @@ class Day20 extends Solution:
 
   class Conjuction(name: String, targets: Seq[String]) extends Module(name, targets):
     val states = mut.Map.empty[String, Boolean]
+    val highInputs = mut.Set.empty[String]
 
     def initialize(inputs: Iterable[String]) =
       inputs.foreach(states.addOne(_, false))
 
     override def run(from: String, signal: Boolean) =
+      if (signal)
+        highInputs.addOne(from)
       states.addOne(from, signal)
       Some(!states.values.forall(x => x))

@@ -30,18 +30,11 @@ broadcaster -> a
 %b -> con
 &con -> output"""
       )
-
-    it("solves part 2"):
-      _assertPart(
-        day.part2,
-        expected = "__PART_2_TEST_EXPECTED__",
-        input = """__PART_2_TEST_INPUT__"""
-      )
   }
 
   describe("Day20 for puzzle input") {
     given day: Solution = Day20()
 
     it("solves part 1")(assertPart(day.part1, 925955316))
-    it("solves part 2")(_assertPart(day.part2, "__PART_2_EXPECTED__"))
+    it("solves part 2")(assertPart(day.part2, 241528477694627L))
   }
