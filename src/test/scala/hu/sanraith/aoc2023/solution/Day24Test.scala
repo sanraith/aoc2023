@@ -19,7 +19,7 @@ class Day24Test extends SolutionTestSpec:
     given day: Solution = Day24()
 
     it("solves part 1")(assertPart(day.part1, 21785))
-    it("solves part 2")(_assertPart(day.part2, "__PART_2_EXPECTED__"))
+    it("solves part 2")(assertPart(day.part2, 554668916217145L))
   }
 
   val example = """

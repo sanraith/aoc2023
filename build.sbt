@@ -8,6 +8,10 @@ run / connectInput := true
 run / javaOptions += "-Dfile.encoding=UTF-8"
 outputStrategy := Some(StdoutOutput)
 
+Compile / unmanagedJars += {
+  baseDirectory.value / "unmanaged" / s"scalaz3_3-4.8.14.jar"
+}
+
 libraryDependencies ++= Seq(
   "org.jsoup" % "jsoup" % "1.16.2",
   "com.github.pureconfig" % "pureconfig_2.13" % "0.17.4",
